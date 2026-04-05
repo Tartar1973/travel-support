@@ -85,15 +85,13 @@ const lineStationOrder: Record<LineKey, string[]> = {
     "nishitakashimadaira",
   ],
   hibiya: [
-    "nakameguro",
-    "ebisu",
-    "hiroo",
-    "roppongi",
-    "kamiyacho",
-    "toranomonhills",
-    "kasumigaseki",
-    "hibiya",
-    "ginza",
+"nakameguro",
+  "hiro",
+  "kita-senju",
+  "takenotsuka",
+  "kita-koshigaya",
+  "kita-kasukabe",
+  "tobu-dobutsu-koen",
   ],
 };
 
@@ -121,16 +119,12 @@ const lineDestinations: Record<
     { destination: "nishitakashimadaira", trainType: "local", platform: "1" },
   ],
   hibiya: [
-    { destination: "nakameguro", trainType: "local", platform: "1" },
-    { destination: "ebisu", trainType: "local", platform: "1" },
-    { destination: "hiroo", trainType: "local", platform: "2" },
-    { destination: "roppongi", trainType: "local", platform: "2" },
-    { destination: "kamiyacho", trainType: "local", platform: "2" },
-    { destination: "toranomonhills", trainType: "local", platform: "2" },
-    { destination: "kasumigaseki", trainType: "local", platform: "2" },
-    { destination: "hibiya", trainType: "local", platform: "2" },
-    { destination: "ginza", trainType: "local", platform: "2" },
-  ],
+    { destination: "hiro", trainType: "local", platform: "2" },
+  { destination: "kita-senju", trainType: "local", platform: "2" },
+  { destination: "takenotsuka", trainType: "local", platform: "2" },
+  { destination: "kita-koshigaya", trainType: "local", platform: "2" },
+  { destination: "kita-kasukabe", trainType: "local", platform: "2" },
+  { destination: "tobu-dobutsu-koen", trainType: "local", platform: "2" },
 };
 
 const expressStopsMeguro = new Set([
