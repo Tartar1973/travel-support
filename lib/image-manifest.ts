@@ -50,36 +50,27 @@ export const imageManifest: ImageManifest = {
       local: "/train-displays/mita/nishi-takashimadaira-local.gif",
     },
   },
-
   hibiya: {
-    nakameguro: {
-      local: "/train-displays/hibiya/nakameguro-local.gif",
+    hiro: {
+      local: "/train-displays/hibiya/hiro-local.gif",
     },
-    ebisu: {
-      local: "/train-displays/hibiya/ebisu-local.gif",
+    "kita-senju": {
+      local: "/train-displays/hibiya/kita-senju-local.gif",
     },
-    hiroo: {
-      local: "/train-displays/hibiya/hiroo-local.gif",
+    takenotsuka: {
+      local: "/train-displays/hibiya/takenotsuka-local.gif",
     },
-    roppongi: {
-      local: "/train-displays/hibiya/roppongi-local.gif",
+    "kita-koshigaya": {
+      local: "/train-displays/hibiya/kita-koshigaya-local.gif",
     },
-    kamiyacho: {
-      local: "/train-displays/hibiya/kamiyacho-local.gif",
+    "kita-kasukabe": {
+      local: "/train-displays/hibiya/kita-kasukabe-local.gif",
     },
-    toranomonhills: {
-      local: "/train-displays/hibiya/toranomonhills-local.gif",
-    },
-    kasumigaseki: {
-      local: "/train-displays/hibiya/kasumigaseki-local.gif",
-    },
-    hibiya: {
-      local: "/train-displays/hibiya/hibiya-local.gif",
-    },
-    ginza: {
-      local: "/train-displays/hibiya/ginza-local.gif",
+    "tobu-dobutsu-koen": {
+      local: "/train-displays/hibiya/tobu-dobutsu-koen-local.gif",
     },
   },
+  
 };
 
 export function getImagePath(
