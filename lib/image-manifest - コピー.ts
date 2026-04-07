@@ -6,14 +6,7 @@ type ImageManifest = Partial<
   Record<LineKey, Partial<Record<string, Partial<Record<TrainTypeKey, string>>>>>
 >;
 
-const normalize = (value: string) =>
-  value
-    .trim()
-    .toLowerCase()
-    .replace(/[\s_]+/g, "-")
-    .replace(/-+/g, "-");
-
-const imageManifest: ImageManifest = {
+export const imageManifest: ImageManifest = {
   meguro: {
     musashikosugi: {
       local: "/train-displays/meguro/musashikosugi-local.gif",
@@ -83,70 +76,10 @@ const imageManifest: ImageManifest = {
   },
 };
 
-const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
-  meguro: {
-    "musashi-kosugi": "musashikosugi",
-    musashikosugi: "musashikosugi",
-    hiyoshi: "hiyoshi",
-    "shin-yokohama": "shin-yokohama",
-    shinyokohama: "shin-yokohama",
-    ebina: "ebina",
-    shonandai: "shonandai",
-    kashiwadai: "kashiwadai",
-  },
-
-  namboku: {
-    akabaneiwabuchi: "akabaneiwabuchi",
-    "akabane-iwabuchi": "akabaneiwabuchi",
-    hatogaya: "hatogaya",
-    urawamisono: "urawamisono",
-    "urawa-misono": "urawamisono",
-  },
-
-  mita: {
-    takashimadaira: "takashimadaira",
-    "takashima-daira": "takashimadaira",
-    nishitakashimadaira: "nishitakashimadaira",
-    "nishi-takashimadaira": "nishitakashimadaira",
-  },
-
-  hibiya: {
-    hiroo: "hiroo",
-    "hiro-o": "hiroo",
-    hiro: "hiroo",
-    kitasenju: "kitasenju",
-    "kita-senju": "kitasenju",
-    takenotsuka: "takenotsuka",
-    kitakoshigaya: "kitakoshigaya",
-    "kita-koshigaya": "kitakoshigaya",
-    kitakasukabe: "kitakasukabe",
-    "kita-kasukabe": "kitakasukabe",
-    tobudobutsukoen: "tobudobutsukoen",
-    "tobu-dobutsu-koen": "tobudobutsukoen",
-  },
-};
-
-export function resolveDestinationKey(
-  line: LineKey,
-  destination: string
-): string | undefined {
-  const normalized = normalize(destination);
-  const aliases = lineAliases[line] ?? {};
-  return aliases[normalized] ?? aliases[normalized.replace(/-/g, "")] ?? normalized;
-}
-
 export function getImagePath(
   line: LineKey,
   destination: string,
   trainType: TrainTypeKey
 ): string | undefined {
-  const resolvedDestination = resolveDestinationKey(line, destination);
-  if (!resolvedDestination) return undefined;
-
-  const dest = imageManifest[line]?.[resolvedDestination];
-  if (!dest) return undefined;
-
-  return dest[trainType] ?? dest.local ?? dest.express;
+  return imageManifest[line]?.[destination]?.[trainType];
 }
-
-export { imageManifest };

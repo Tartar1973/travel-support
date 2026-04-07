@@ -1,9 +1,13 @@
 import Head from 'next/head';
-import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 
 type Language = 'en' | 'ja';
 type LineKey = 'meguro' | 'namboku' | 'mita' | 'hibiya';
+
+type Station = {
+  ja: string;
+  en: string;
+};
 
 type Option = {
   id: string;
@@ -12,14 +16,8 @@ type Option = {
   destinationEn: string;
   typeJa: string;
   typeEn: string;
-  image: string;
-  noteJa?: string;
-  noteEn?: string;
-};
-
-type Station = {
-  ja: string;
-  en: string;
+  imageCandidates: string[];
+  reachJa?: string;
 };
 
 const lineLabels: Record<LineKey, { ja: string; en: string }> = {
@@ -55,7 +53,7 @@ const stations: Record<LineKey, Station[]> = {
     { ja: '西谷', en: 'Nishiya' },
     { ja: '二俣川', en: 'Futamatagawa' },
     { ja: '大和', en: 'Yamato' },
-    { ja: '海老名', en: 'Ebina' }
+    { ja: '海老名', en: 'Ebina' },
   ],
   namboku: [
     { ja: '目黒', en: 'Meguro' },
@@ -83,7 +81,7 @@ const stations: Record<LineKey, Station[]> = {
     { ja: '新井宿', en: 'Araijuku' },
     { ja: '戸塚安行', en: 'Tozuka-angyo' },
     { ja: '東川口', en: 'Higashi-Kawaguchi' },
-    { ja: '浦和美園', en: 'Urawa-Misono' }
+    { ja: '浦和美園', en: 'Urawa-Misono' },
   ],
   mita: [
     { ja: '目黒', en: 'Meguro' },
@@ -93,23 +91,114 @@ const stations: Record<LineKey, Station[]> = {
     { ja: '大手町', en: 'Otemachi' },
     { ja: '神保町', en: 'Jimbocho' },
     { ja: '巣鴨', en: 'Sugamo' },
+    { ja: '高島平', en: 'Takashimadaira' },
     { ja: '西高島平', en: 'Nishi-Takashimadaira' },
-    { ja: '高島平', en: 'Takashimadaira' }
   ],
   hibiya: [
     { ja: '中目黒', en: 'Naka-Meguro' },
     { ja: '恵比寿', en: 'Ebisu' },
+    { ja: '広尾', en: 'Hiro-o' },
     { ja: '六本木', en: 'Roppongi' },
+    { ja: '神谷町', en: 'Kamiyacho' },
+    { ja: '虎ノ門ヒルズ', en: 'Toranomon-hills' },
     { ja: '霞ケ関', en: 'Kasumigaseki' },
+    { ja: '日比谷', en: 'Hibiya' },
     { ja: '銀座', en: 'Ginza' },
     { ja: '東銀座', en: 'Higashi-Ginza' },
     { ja: '築地', en: 'Tsukiji' },
     { ja: '八丁堀', en: 'Hatchobori' },
+    { ja: '茅場町', en: 'Kayabacho' },
+    { ja: '人形町', en: 'Ningyocho' },
+    { ja: '小伝馬町', en: 'Kodemmacho' },
     { ja: '秋葉原', en: 'Akihabara' },
+    { ja: '仲御徒町', en: 'Naka-Okachimachi' },
     { ja: '上野', en: 'Ueno' },
-    { ja: '北千住', en: 'Kita-Senju' }
-  ]
+    { ja: '入谷', en: 'Iriya' },
+    { ja: '三ノ輪', en: 'Minowa' },
+    { ja: '南千住', en: 'Minami-Senju' },
+    { ja: '北千住', en: 'Kita-Senju' },
+    { ja: '小菅', en: 'Kosuge' },
+    { ja: '五反野', en: 'Gotanno' },
+    { ja: '梅島', en: 'Umejima' },
+    { ja: '西新井', en: 'Nishiarai' },
+    { ja: '竹ノ塚', en: 'Takenotsuka' },
+    { ja: '谷塚', en: 'Yatsuka' },
+    { ja: '草加', en: 'Soka' },
+    { ja: '獨協大学前〈草加松原〉', en: 'Dokkyodaigakumae <Soka-Matsubara>' },
+    { ja: '新田', en: 'Shinden' },
+    { ja: '蒲生', en: 'Gamo' },
+    { ja: '新越谷', en: 'Shin-Koshigaya' },
+    { ja: '越谷', en: 'Koshigaya' },
+    { ja: '北越谷', en: 'Kita-Koshigaya' },
+    { ja: '大袋', en: 'Obukuro' },
+    { ja: 'せんげん台', en: 'Sengendai' },
+    { ja: '武里', en: 'Takesato' },
+    { ja: '一ノ割', en: 'Ichinowari' },
+    { ja: '春日部', en: 'Kasukabe' },
+    { ja: '北春日部', en: 'Kita-Kasukabe' },
+    { ja: '姫宮', en: 'Himemiya' },
+    { ja: '東武動物公園', en: 'Tobu-Dobutsu-Koen' },
+  ],
 };
+
+
+const imageSlugOverrides: Partial<Record<LineKey, Record<string, string[]>>> = {
+  hibiya: {
+    'Hiro-o': ['hiro-o', 'hiro'],
+    'Kita-Senju': ['kita-senju'],
+    'Takenotsuka': ['takenotsuka'],
+    'Kita-Koshigaya': ['kita-koshigaya'],
+    'Kita-Kasukabe': ['kita-kasukabe'],
+    'Tobu-Dobutsu-Koen': ['tobu-dobutsu-koen'],
+    'Shin-Koshigaya': ['shin-koshigaya', 'shinkoshigaya'],
+  },
+};
+
+const hibiyaNorthboundDestinations: Array<{ ja: string; en: string }> = [
+  { ja: '北千住', en: 'Kita-Senju' },
+  { ja: '竹ノ塚', en: 'Takenotsuka' },
+  { ja: '草加', en: 'Soka' },
+  { ja: '新越谷', en: 'Shin-Koshigaya' },
+  { ja: '越谷', en: 'Koshigaya' },
+  { ja: '北越谷', en: 'Kita-Koshigaya' },
+  { ja: 'せんげん台', en: 'Sengendai' },
+  { ja: '春日部', en: 'Kasukabe' },
+  { ja: '北春日部', en: 'Kita-Kasukabe' },
+  { ja: '東武動物公園', en: 'Tobu-Dobutsu-Koen' },
+];
+
+function slugVariants(base: string): string[] {
+  const trimmed = base.trim().toLowerCase();
+  const cleaned = trimmed
+    .replace(/[()<>]/g, '')
+    .replace(/[〈〉]/g, '')
+    .replace(/&/g, 'and')
+    .replace(/['’.]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+
+  const noHyphen = cleaned.replace(/-/g, '');
+  const underscore = cleaned.replace(/-/g, '_');
+
+  return Array.from(new Set([cleaned, noHyphen, underscore]));
+}
+
+function buildImageCandidates(line: LineKey, destinationEn: string, typeEn: string): string[] {
+  const extList = ['gif', 'png', 'jpg', 'jpeg', 'webp'];
+  const service = typeEn.toLowerCase();
+  const overrideNames = imageSlugOverrides[line]?.[destinationEn] ?? [];
+  const names = Array.from(new Set([...overrideNames, ...slugVariants(destinationEn)]));
+  const candidates: string[] = [];
+
+  for (const name of names) {
+    for (const ext of extList) {
+      candidates.push(`/train-displays/${line}/${name}-${service}.${ext}`);
+      candidates.push(`/train-displays/${line}/${name}.${ext}`);
+    }
+  }
+
+  return Array.from(new Set(candidates));
+}
 
 const options: Record<LineKey, Option[]> = {
   meguro: [
@@ -120,7 +209,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Hiyoshi',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/meguro/hiyoshi-local.gif'
+      imageCandidates: buildImageCandidates('meguro', 'Hiyoshi', 'Local'),
     },
     {
       id: 'meguro-musashikosugi-local',
@@ -129,7 +218,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Musashi-Kosugi',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/meguro/musashikosugi-local.gif'
+      imageCandidates: buildImageCandidates('meguro', 'Musashi-Kosugi', 'Local'),
     },
     {
       id: 'meguro-shinyokohama-local',
@@ -138,7 +227,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Shin-Yokohama',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/meguro/shin-yokohama-local.gif'
+      imageCandidates: buildImageCandidates('meguro', 'Shin-Yokohama', 'Local'),
     },
     {
       id: 'meguro-ebina-local',
@@ -147,7 +236,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Ebina',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/meguro/ebina-local.gif'
+      imageCandidates: buildImageCandidates('meguro', 'Ebina', 'Local'),
     },
     {
       id: 'meguro-shinyokohama-express',
@@ -156,7 +245,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Shin-Yokohama',
       typeJa: '急行',
       typeEn: 'Express',
-      image: '/train-displays/meguro/shin-yokohama-express.gif'
+      imageCandidates: buildImageCandidates('meguro', 'Shin-Yokohama', 'Express'),
     },
     {
       id: 'meguro-ebina-express',
@@ -165,8 +254,8 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Ebina',
       typeJa: '急行',
       typeEn: 'Express',
-      image: '/train-displays/meguro/ebina-express.gif'
-    }
+      imageCandidates: buildImageCandidates('meguro', 'Ebina', 'Express'),
+    },
   ],
   namboku: [
     {
@@ -176,7 +265,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Akabane-Iwabuchi',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/namboku/akabane-iwabuchi-local.gif'
+      imageCandidates: buildImageCandidates('namboku', 'Akabane-Iwabuchi', 'Local'),
     },
     {
       id: 'namboku-urawamisono-local',
@@ -185,8 +274,8 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Urawa-Misono',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/namboku/urawamisono-local.gif'
-    }
+      imageCandidates: buildImageCandidates('namboku', 'Urawa-Misono', 'Local'),
+    },
   ],
   mita: [
     {
@@ -196,7 +285,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Takashimadaira',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/mita/takashimadaira-local.png'
+      imageCandidates: buildImageCandidates('mita', 'Takashimadaira', 'Local'),
     },
     {
       id: 'mita-nishitakashimadaira-local',
@@ -205,20 +294,19 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Nishi-Takashimadaira',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/mita/nishi-takashimadaira-local.png'
-    }
+      imageCandidates: buildImageCandidates('mita', 'Nishi-Takashimadaira', 'Local'),
+    },
   ],
-  hibiya: [
-    {
-      id: 'hibiya-kitasenju-local',
-      line: 'hibiya',
-      destinationJa: '北千住',
-      destinationEn: 'Kita-Senju',
-      typeJa: '各停',
-      typeEn: 'Local',
-      image: '/train-displays/hibiya/kitasenju-local.gif'
-    }
-  ]
+  hibiya: hibiyaNorthboundDestinations.map((destination) => ({
+    id: `hibiya-${destination.en.toLowerCase()}`,
+    line: 'hibiya',
+    destinationJa: destination.ja,
+    destinationEn: destination.en,
+    typeJa: '各停',
+    typeEn: 'Local',
+    imageCandidates: buildImageCandidates('hibiya', destination.en, 'Local'),
+    reachJa: destination.ja,
+  })),
 };
 
 function stationIndex(line: LineKey, stationName: string, language: Language): number {
@@ -237,23 +325,49 @@ function getReachableOptions(line: LineKey, from: string, to: string, language: 
     return [];
   }
 
+  if (line === 'hibiya') {
+    return options.hibiya.filter((option) => {
+      const reach = option.reachJa ? destinationIndex('hibiya', option.reachJa) : destinationIndex('hibiya', option.destinationJa);
+      return reach >= toIndex;
+    });
+  }
+
   const base = options[line].filter((option) => destinationIndex(line, option.destinationJa) >= toIndex);
 
   if (line !== 'meguro') {
     return base;
   }
 
-  const localOnlyStations = new Set(['不動前', '西小山', '洗足', '奥沢', '新丸子', '元住吉', '新綱島', '日吉本町', 'センター北', 'センター南', '新羽', '北新横浜', '羽沢横浜国大', '西谷', '二俣川', '大和']);
+  const localOnlyStations = new Set([
+    '不動前', '西小山', '洗足', '奥沢', '新丸子', '元住吉', '新綱島', '日吉本町', 'センター北',
+    'センター南', '新羽', '北新横浜', '羽沢横浜国大', '西谷', '二俣川', '大和',
+  ]);
   const expressStops = new Set(['目黒', '武蔵小山', '大岡山', '田園調布', '多摩川', '武蔵小杉', '日吉', '新横浜', '海老名']);
   const destinationJa = stations[line][toIndex].ja;
 
-  const filtered = base.filter((option) => {
+  return base.filter((option) => {
     if (option.typeJa === '各停') return true;
     if (localOnlyStations.has(destinationJa)) return false;
     return expressStops.has(destinationJa);
   });
+}
 
-  return filtered;
+function TrainImage({ candidates, alt }: { candidates: string[]; alt: string }) {
+  const [index, setIndex] = useState(0);
+  const src = candidates[index];
+
+  if (!src) {
+    return <div className="imageFallback">Image not found</div>;
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="trainImageTag"
+      onError={() => setIndex((current) => current + 1)}
+    />
+  );
 }
 
 export default function HomePage() {
@@ -292,12 +406,10 @@ export default function HomePage() {
     [line, fromStation, toStation, language]
   );
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   const t = {
-    title: language === 'ja' ? 'Train Boarding Support' : 'Train Boarding Support',
+    title: 'Train Boarding Support',
     subtitle:
       language === 'ja'
         ? '駅で見えている行先表示から、乗ってよい候補をわかりやすく表示します。'
@@ -305,7 +417,6 @@ export default function HomePage() {
     line: language === 'ja' ? '路線' : 'Line',
     from: language === 'ja' ? '乗る駅' : 'Boarding Station',
     to: language === 'ja' ? '降りる駅' : 'Destination Station',
-    language: language === 'ja' ? '言語' : 'Language',
     results: language === 'ja' ? '乗ってよい候補' : 'Recommended train displays',
     noneTitle: language === 'ja' ? '候補が見つかりません' : 'No matching train found',
     noneText:
@@ -317,7 +428,7 @@ export default function HomePage() {
         ? '※ 実際の運行・種別・停車駅は現地表示で確認してください。'
         : 'Please confirm the real-time platform display before boarding.',
     switchToJa: '日本語',
-    switchToEn: 'English'
+    switchToEn: 'English',
   };
 
   return (
@@ -335,18 +446,10 @@ export default function HomePage() {
               <p>{t.subtitle}</p>
             </div>
             <div className="langSwitch">
-              <button
-                className={language === 'en' ? 'active' : ''}
-                onClick={() => setLanguage('en')}
-                type="button"
-              >
+              <button className={language === 'en' ? 'active' : ''} onClick={() => setLanguage('en')} type="button">
                 {t.switchToEn}
               </button>
-              <button
-                className={language === 'ja' ? 'active' : ''}
-                onClick={() => setLanguage('ja')}
-                type="button"
-              >
+              <button className={language === 'ja' ? 'active' : ''} onClick={() => setLanguage('ja')} type="button">
                 {t.switchToJa}
               </button>
             </div>
@@ -411,13 +514,10 @@ export default function HomePage() {
                     <span className="badge typeBadge">{language === 'ja' ? result.typeJa : result.typeEn}</span>
                   </div>
                   <h3>{language === 'ja' ? result.destinationJa : result.destinationEn}</h3>
-                  <div className="imageWrap">
-                    <Image
-                      src={result.image}
+                  <div className="imageWrap imageWrapNoFill">
+                    <TrainImage
+                      candidates={result.imageCandidates}
                       alt={`${language === 'ja' ? result.destinationJa : result.destinationEn} ${language === 'ja' ? result.typeJa : result.typeEn}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 480px"
-                      className="trainImage"
                     />
                   </div>
                 </article>
