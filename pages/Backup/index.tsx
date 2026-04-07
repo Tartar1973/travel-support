@@ -176,7 +176,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Akabane-Iwabuchi',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/namboku/akabaneiwabuchi-local.gif'
+      image: '/train-displays/namboku/akabane-iwabuchi-local.gif'
     },
     {
       id: 'namboku-urawamisono-local',
@@ -196,7 +196,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Takashimadaira',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/mita/takashimadaira-local.gif'
+      image: '/train-displays/mita/takashimadaira-local.png'
     },
     {
       id: 'mita-nishitakashimadaira-local',
@@ -205,7 +205,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Nishi-Takashimadaira',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/mita/nishi-takashimadaira-local.gif'
+      image: '/train-displays/mita/nishi-takashimadaira-local.png'
     }
   ],
   hibiya: [
@@ -216,7 +216,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Kita-Senju',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/hibiya/kita-senju-local.gif'
+      image: '/train-displays/hibiya/kitasenju-local.gif'
     }
   ]
 };

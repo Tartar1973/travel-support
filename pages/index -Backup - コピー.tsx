@@ -377,8 +377,6 @@ export default function HomePage() {
                           src={item.image}
                           alt={`${getStationLabel(line, item.destination, lang)} display`}
                           fill
-                          unoptimized
-                          sizes="(max-width: 480px) 100vw, 480px"
                           style={{ objectFit: "contain" }}
                         />
                       </div>
@@ -484,8 +482,6 @@ export default function HomePage() {
                             src={item.image}
                             alt={`${getStationLabel(line, item.destination, lang)} display`}
                             fill
-                            unoptimized
-                            sizes="(max-width: 480px) 100vw, 480px"
                             style={{ objectFit: "contain" }}
                           />
                         </div>
