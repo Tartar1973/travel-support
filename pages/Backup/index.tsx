@@ -138,7 +138,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Shin-Yokohama',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/meguro/shinyokohama-local.gif'
+      image: '/train-displays/meguro/shin-yokohama-local.gif'
     },
     {
       id: 'meguro-ebina-local',
@@ -156,7 +156,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Shin-Yokohama',
       typeJa: '急行',
       typeEn: 'Express',
-      image: '/train-displays/meguro/shinyokohama-express.gif'
+      image: '/train-displays/meguro/shin-yokohama-express.gif'
     },
     {
       id: 'meguro-ebina-express',
@@ -185,7 +185,7 @@ const options: Record<LineKey, Option[]> = {
       destinationEn: 'Urawa-Misono',
       typeJa: '各停',
       typeEn: 'Local',
-      image: '/train-displays/namboku/urawa-misono-local.gif'
+      image: '/train-displays/namboku/urawamisono-local.gif'
     }
   ],
   mita: [
