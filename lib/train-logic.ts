@@ -150,21 +150,21 @@ const lineDestinations: Record<
     { destination: "urawamisono", trainType: "express", direction: "inbound", platform: "2" },
   ],
   namboku: [
-    { destination: "akabaneiwabuchi", trainType: "local", platform: "1" },
-    { destination: "hatogaya", trainType: "local", platform: "1" },
-    { destination: "urawamisono", trainType: "local", platform: "1" },
+    { destination: "akabaneiwabuchi", trainType: "local", direction: "outbound", platform: "1" },
+    { destination: "hatogaya", trainType: "local", direction: "outbound", platform: "1" },
+    { destination: "urawamisono", trainType: "local", direction: "outbound", platform: "1" },
   ],
   mita: [
-    { destination: "takashimadaira", trainType: "local", platform: "1" },
-    { destination: "nishitakashimadaira", trainType: "local", platform: "1" },
+    { destination: "takashimadaira", trainType: "local", direction: "outbound", platform: "1" },
+    { destination: "nishitakashimadaira", trainType: "local", direction: "outbound", platform: "1" },
   ],
   hibiya: [
-    { destination: "hiroo", trainType: "local", platform: "2" },
-    { destination: "kitasenju", trainType: "local", platform: "2" },
-    { destination: "takenotsuka", trainType: "local", platform: "2" },
-    { destination: "kitakoshigaya", trainType: "local", platform: "2" },
-    { destination: "kitakasukabe", trainType: "local", platform: "2" },
-    { destination: "tobudobutsukoen", trainType: "local", platform: "2" },
+    { destination: "hiroo", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "kitasenju", trainType: "local", direction: "outbound", platform: "2" },
+    { destination: "takenotsuka", trainType: "local", direction: "outbound", platform: "2" },
+    { destination: "kitakoshigaya", trainType: "local", direction: "outbound", platform: "2" },
+    { destination: "kitakasukabe", trainType: "local", direction: "outbound", platform: "2" },
+    { destination: "tobudobutsukoen", trainType: "local", direction: "outbound", platform: "2" },
   ],
 };
 
