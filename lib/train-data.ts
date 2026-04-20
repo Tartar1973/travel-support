@@ -119,6 +119,7 @@ export const trainLines: Record<LineKey, TrainLine> = {
       { key: "nakaokachimachi", ja: "仲御徒町", en: "Naka-Okachimachi" },
       { key: "ueno", ja: "上野", en: "Ueno" },
       { key: "iriya", ja: "入谷", en: "Iriya" },
+      { key: "minowa", ja: "三ノ輪", en: "Minowa" },
       { key: "minamisenju", ja: "南千住", en: "Minami-Senju" },
       { key: "kitasenju", ja: "北千住", en: "Kita-Senju" },
       { key: "takenotsuka", ja: "竹ノ塚", en: "Takenotsuka" },
@@ -138,7 +139,15 @@ export function getStationLabel(
   stationKey: string,
   lang: "ja" | "en"
 ) {
+  // まず指定路線で探す
   const station = trainLines[lineKey].stations.find((s) => s.key === stationKey);
-  if (!station) return stationKey;
-  return lang === "ja" ? station.ja : station.en;
+  if (station) return lang === "ja" ? station.ja : station.en;
+
+  // 直通先など他路線にある駅キーのフォールバック
+  for (const line of Object.values(trainLines)) {
+    const s = line.stations.find((s) => s.key === stationKey);
+    if (s) return lang === "ja" ? s.ja : s.en;
+  }
+
+  return stationKey;
 }

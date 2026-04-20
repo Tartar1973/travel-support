@@ -1,4 +1,3 @@
-
 import type { LineKey } from "./train-data";
 
 export type TrainTypeKey = "local" | "express";
@@ -16,6 +15,18 @@ const normalize = (value: string) =>
 
 const imageManifest: ImageManifest = {
   meguro: {
+    // 南行き（目黒線内・相鉄直通）
+    meguro: {
+      local: "/train-displays/meguro/meguro-local.gif",
+      express: "/train-displays/meguro/meguro-express.gif",
+    },
+    ookayama: {
+      local: "/train-displays/meguro/ookayama-local.gif",
+      express: "/train-displays/meguro/ookayama-express.gif",
+    },
+    okusawa: {
+      local: "/train-displays/meguro/okusawa-local.gif",
+    },
     musashikosugi: {
       local: "/train-displays/meguro/musashikosugi-local.gif",
       express: "/train-displays/meguro/musashikosugi-express.gif",
@@ -39,26 +50,51 @@ const imageManifest: ImageManifest = {
     kashiwadai: {
       local: "/train-displays/meguro/kashiwadai-local.gif",
     },
+    // 北行き（三田線直通）
+    takashimadaira: {
+      express: "/train-displays/meguro/takashimadaira-express.gif",
+    },
+    nishitakashimadaira: {
+      express: "/train-displays/meguro/nishi-takashimadaira-express.gif",
+    },
+    // 北行き（南北線直通）
+    akabaneiwabuchi: {
+      express: "/train-displays/meguro/akabane-iwabuchi-express.gif",
+    },
+    hatogaya: {
+      express: "/train-displays/meguro/hatogaya-express.gif",
+    },
+    urawamisono: {
+      express: "/train-displays/meguro/urawa-misono-express.gif",
+    },
   },
 
   namboku: {
     akabaneiwabuchi: {
       local: "/train-displays/namboku/akabaneiwabuchi-local.gif",
+      express: "/train-displays/namboku/akabane-iwabuchi-express.gif",
     },
     hatogaya: {
       local: "/train-displays/namboku/hatogaya-local.gif",
+      express: "/train-displays/namboku/hatogaya-express.gif",
     },
     urawamisono: {
       local: "/train-displays/namboku/urawamisono-local.gif",
+      express: "/train-displays/namboku/urawa-misono-express.gif",
     },
   },
 
   mita: {
+    hatogaya: {
+      local: "/train-displays/mita/hatogaya-local.gif",
+    },
     takashimadaira: {
       local: "/train-displays/mita/takashimadaira-local.gif",
+      express: "/train-displays/mita/takashimadaira-express.gif",
     },
     nishitakashimadaira: {
       local: "/train-displays/mita/nishi-takashimadaira-local.gif",
+      express: "/train-displays/mita/nishi-takashimadaira-express.gif",
     },
   },
 
@@ -88,12 +124,24 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
   meguro: {
     "musashi-kosugi": "musashikosugi",
     musashikosugi: "musashikosugi",
+    ookayama: "ookayama",
+    okusawa: "okusawa",
     hiyoshi: "hiyoshi",
     "shin-yokohama": "shin-yokohama",
     shinyokohama: "shin-yokohama",
     ebina: "ebina",
     shonandai: "shonandai",
     kashiwadai: "kashiwadai",
+    // 北行き（三田線直通）
+    takashimadaira: "takashimadaira",
+    nishitakashimadaira: "nishitakashimadaira",
+    "nishi-takashimadaira": "nishitakashimadaira",
+    // 北行き（南北線直通）
+    akabaneiwabuchi: "akabaneiwabuchi",
+    "akabane-iwabuchi": "akabaneiwabuchi",
+    hatogaya: "hatogaya",
+    urawamisono: "urawamisono",
+    "urawa-misono": "urawamisono",
   },
 
   namboku: {
@@ -136,6 +184,10 @@ export function resolveDestinationKey(
   return aliases[normalized] ?? aliases[normalized.replace(/-/g, "")] ?? normalized;
 }
 
+// meguro線北行き各停の行先は namboku/mita の local 画像を使う
+const MEGURO_INBOUND_NAMBOKU = new Set(["akabaneiwabuchi", "hatogaya", "urawamisono"]);
+const MEGURO_INBOUND_MITA    = new Set(["takashimadaira", "nishitakashimadaira"]);
+
 export function getImagePath(
   line: LineKey,
   destination: string,
@@ -144,10 +196,21 @@ export function getImagePath(
   const resolvedDestination = resolveDestinationKey(line, destination);
   if (!resolvedDestination) return undefined;
 
-  const dest = imageManifest[line]?.[resolvedDestination];
+  let dest = imageManifest[line]?.[resolvedDestination];
+
+  // meguro線北行き各停: meguroフォルダにlocal画像がない場合は namboku/mita から参照
+  if (line === "meguro" && trainType === "local" && (!dest || !dest.local)) {
+    if (MEGURO_INBOUND_NAMBOKU.has(resolvedDestination)) {
+      dest = imageManifest["namboku"]?.[resolvedDestination];
+    } else if (MEGURO_INBOUND_MITA.has(resolvedDestination)) {
+      dest = imageManifest["mita"]?.[resolvedDestination];
+    }
+  }
+
   if (!dest) return undefined;
 
-  return dest[trainType] ?? dest.local ?? dest.express;
+  // trainTypeに対応する画像がない場合はundefinedを返す（異種別へのフォールバックをしない）
+  return dest[trainType];
 }
 
 export { imageManifest };
