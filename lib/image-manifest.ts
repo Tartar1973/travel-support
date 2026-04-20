@@ -1,3 +1,4 @@
+
 import type { LineKey } from "./train-data";
 
 export type TrainTypeKey = "local" | "express";

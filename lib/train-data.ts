@@ -19,6 +19,7 @@ export const trainLines: Record<LineKey, TrainLine> = {
     ja: "目黒線",
     en: "Meguro Line",
     stations: [
+      // 目黒線内
       { key: "meguro", ja: "目黒", en: "Meguro" },
       { key: "fudomae", ja: "不動前", en: "Fudomae" },
       { key: "musashikoyama", ja: "武蔵小山", en: "Musashi-Koyama" },
@@ -34,9 +35,21 @@ export const trainLines: Record<LineKey, TrainLine> = {
       { key: "hiyoshi", ja: "日吉", en: "Hiyoshi" },
       { key: "shin-tsunashima", ja: "新綱島", en: "Shin-Tsunashima" },
       { key: "shin-yokohama", ja: "新横浜", en: "Shin-Yokohama" },
-      { key: "ebina", ja: "海老名", en: "Ebina" },
-      { key: "shonandai", ja: "湘南台", en: "Shonandai" },
+      // 相鉄新横浜線・本線（海老名方面）
+      { key: "hazawa-yokohama-kokudai", ja: "羽沢横浜国大", en: "Hazawa Yokohama-Kokudai" },
+      { key: "nishiya", ja: "西谷", en: "Nishiya" },
+      { key: "tsurugamine", ja: "鶴ケ峰", en: "Tsurugamine" },
+      { key: "futamatagawa", ja: "二俣川", en: "Futamatagawa" },
+      { key: "kibogaoka", ja: "希望ケ丘", en: "Kibogaoka" },
+      { key: "mitsukyo", ja: "三ツ境", en: "Mitsukyo" },
+      { key: "seya", ja: "瀬谷", en: "Seya" },
+      { key: "yamato", ja: "大和", en: "Yamato" },
+      { key: "sagamiotsuka", ja: "相模大塚", en: "Sagami-Otsuka" },
+      { key: "sagamino", ja: "さがみ野", en: "Sagamino" },
       { key: "kashiwadai", ja: "かしわ台", en: "Kashiwadai" },
+      { key: "ebina", ja: "海老名", en: "Ebina" },
+      // 相鉄いずみ野線（湘南台方面）※二俣川から分岐
+      { key: "shonandai", ja: "湘南台", en: "Shonandai" },
     ],
   },
 
