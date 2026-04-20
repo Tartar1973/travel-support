@@ -524,15 +524,17 @@ function isDirectionalCandidate(
 }
 
 function sortIndexForMeguro(direction: "outbound" | "inbound", station: string) {
-  const primaryPath =
+  const primaryPath: readonly string[] =
     direction === "outbound"
       ? MEGURO_LOCAL_OUTBOUND_PATHS[0]
       : MEGURO_LOCAL_INBOUND_PATHS[0];
   const index = primaryPath.indexOf(station);
   if (index >= 0) return index;
 
-  for (const path of direction === "outbound" ? MEGURO_LOCAL_OUTBOUND_PATHS : MEGURO_LOCAL_INBOUND_PATHS) {
-    const otherIndex = path.indexOf(station);
+  const paths: readonly (readonly string[])[] =
+    direction === "outbound" ? MEGURO_LOCAL_OUTBOUND_PATHS : MEGURO_LOCAL_INBOUND_PATHS;
+  for (const path of paths) {
+    const otherIndex = (path as readonly string[]).indexOf(station);
     if (otherIndex >= 0) return otherIndex;
   }
   return Number.MAX_SAFE_INTEGER;
