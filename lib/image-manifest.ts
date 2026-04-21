@@ -107,7 +107,7 @@ const imageManifest: ImageManifest = {
       local: "/train-displays/mita/nishi-takashimadaira-local.gif",
       express: "/train-displays/mita/nishi-takashimadaira-express.gif",
     },
-    // 相鉄直通（outbound）
+    // 相鉄直通（inbound）
     nishiya: {
       local: "/train-displays/mita/nishiya-local.gif",
       express: "/train-displays/mita/nishiya-express.gif",
@@ -117,7 +117,7 @@ const imageManifest: ImageManifest = {
     },
     musashikosugi: {
       local: "/train-displays/mita/musashi-kosugi-local.gif",
-      express: "/train-displays/mita/musashi-kosugi-experss.gif",
+      express: "/train-displays/mita/musashi-kosugi-express.gif",
     },
     "shin-yokohama": {
       local: "/train-displays/mita/shin-yokohama-local.gif",
@@ -144,14 +144,26 @@ const imageManifest: ImageManifest = {
   },
 
   hibiya: {
+    nakameguro: {
+      local: "/train-displays/hibiya/naka-meguro-local.gif",
+    },
+    ebisu: {
+      local: "/train-displays/hibiya/ebisu-local.gif",
+    },
     hiroo: {
       local: "/train-displays/hibiya/hiro-local.gif",
+    },
+    minamisenju: {
+      local: "/train-displays/hibiya/minami-senju-local.gif",
     },
     kitasenju: {
       local: "/train-displays/hibiya/kita-senju-local.gif",
     },
     takenotsuka: {
       local: "/train-displays/hibiya/takenotsuka-local.gif",
+    },
+    soka: {
+      local: "/train-displays/hibiya/soka-local.gif",
     },
     kitakoshigaya: {
       local: "/train-displays/hibiya/kita-koshigaya-local.gif",
@@ -161,6 +173,9 @@ const imageManifest: ImageManifest = {
     },
     tobudobutsukoen: {
       local: "/train-displays/hibiya/tobu-dobutsu-koen-local.gif",
+    },
+    minamikurihashi: {
+      local: "/train-displays/hibiya/minami-kurihashi-local.gif",
     },
   },
   "nex-shinjuku": {
@@ -239,18 +254,26 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
   },
 
   hibiya: {
+    nakameguro: "nakameguro",
+    "naka-meguro": "nakameguro",
+    ebisu: "ebisu",
     hiroo: "hiroo",
     "hiro-o": "hiroo",
     hiro: "hiroo",
+    minamisenju: "minamisenju",
+    "minami-senju": "minamisenju",
     kitasenju: "kitasenju",
     "kita-senju": "kitasenju",
     takenotsuka: "takenotsuka",
+    soka: "soka",
     kitakoshigaya: "kitakoshigaya",
     "kita-koshigaya": "kitakoshigaya",
     kitakasukabe: "kitakasukabe",
     "kita-kasukabe": "kitakasukabe",
     tobudobutsukoen: "tobudobutsukoen",
     "tobu-dobutsu-koen": "tobudobutsukoen",
+    minamikurihashi: "minamikurihashi",
+    "minami-kurihashi": "minamikurihashi",
   },
   "nex-shinjuku": {
     shinjuku: "shinjuku",

@@ -111,9 +111,11 @@ const lineStationOrder: Record<LineKey, string[]> = {
     "minamisenju",
     "kitasenju",
     "takenotsuka",
+    "soka",
     "kitakoshigaya",
     "kitakasukabe",
     "tobudobutsukoen",
+    "minamikurihashi",
   ],
   "nex-shinjuku": [
     "narita-airport",
@@ -200,12 +202,17 @@ const lineDestinations: Record<
     { destination: "urawamisono", trainType: "local", direction: "inbound", platform: "2" },
   ],
   hibiya: [
-    { destination: "hiroo", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "nakameguro", trainType: "local", direction: "inbound", platform: "1" },
+    { destination: "ebisu", trainType: "local", direction: "inbound", platform: "1" },
+    { destination: "hiroo", trainType: "local", direction: "inbound", platform: "1" },
+    { destination: "minamisenju", trainType: "local", direction: "outbound", platform: "2" },
     { destination: "kitasenju", trainType: "local", direction: "outbound", platform: "2" },
     { destination: "takenotsuka", trainType: "local", direction: "outbound", platform: "2" },
+    { destination: "soka", trainType: "local", direction: "outbound", platform: "2" },
     { destination: "kitakoshigaya", trainType: "local", direction: "outbound", platform: "2" },
     { destination: "kitakasukabe", trainType: "local", direction: "outbound", platform: "2" },
     { destination: "tobudobutsukoen", trainType: "local", direction: "outbound", platform: "2" },
+    { destination: "minamikurihashi", trainType: "local", direction: "outbound", platform: "2" },
   ],
   "nex-shinjuku": [
     { destination: "shinjuku", trainType: "express", direction: "outbound", platform: "1" },
@@ -761,6 +768,16 @@ export function getTrainResults({
       if (fromIndex < 0 || toIndex < 0 || destIndex < 0) return false;
       if (direction === "outbound") return fromIndex < toIndex && destIndex >= toIndex;
       return fromIndex > toIndex && destIndex <= toIndex;
+    }
+
+    // 三田線急行（相鉄直通含む）の到達判定
+    if (line === "mita" && item.trainType === "express") {
+      // 相鉄直通行先はlineStationOrderにないので、inboundなら常にOK
+      if (MITA_SOTETSU_DESTINATIONS.has(item.destination)) {
+        return direction === "inbound";
+      }
+      // 通常行先はlineStationOrderで判定
+      return canReachByLocal(line, fromStation, toStation, item.destination, direction);
     }
 
     return false;

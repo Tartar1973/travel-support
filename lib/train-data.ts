@@ -136,9 +136,11 @@ export const trainLines: Record<LineKey, TrainLine> = {
       { key: "minamisenju", ja: "南千住", en: "Minami-Senju" },
       { key: "kitasenju", ja: "北千住", en: "Kita-Senju" },
       { key: "takenotsuka", ja: "竹ノ塚", en: "Takenotsuka" },
+      { key: "soka", ja: "草加", en: "Soka" },
       { key: "kitakoshigaya", ja: "北越谷", en: "Kita-Koshigaya" },
       { key: "kitakasukabe", ja: "北春日部", en: "Kita-Kasukabe" },
       { key: "tobudobutsukoen", ja: "東武動物公園", en: "Tobu-Dobutsu-Koen" },
+      { key: "minamikurihashi", ja: "南栗橋", en: "Minami-Kurihashi" },
     ],
   },
 
