@@ -1,4 +1,3 @@
-
 import type { LineKey } from "./train-data";
 
 export type TrainTypeKey = "local" | "express";
@@ -71,6 +70,9 @@ const imageManifest: ImageManifest = {
   },
 
   namboku: {
+    meguro: {
+      local: "/train-displays/namboku/meguro-local.gif",
+    },
     akabaneiwabuchi: {
       local: "/train-displays/namboku/akabaneiwabuchi-local.gif",
       express: "/train-displays/namboku/akabane-iwabuchi-express.gif",
@@ -86,8 +88,16 @@ const imageManifest: ImageManifest = {
   },
 
   mita: {
-    hatogaya: {
-      local: "/train-displays/mita/hatogaya-local.gif",
+    // 目黒線方面（inbound）
+    meguro: {
+      local: "/train-displays/mita/meguro-local.gif",
+    },
+    shirokanetakanawa: {
+      local: "/train-displays/mita/shirokanetakanawa-local.gif",
+    },
+    // 三田線内（outbound）
+    sugamo: {
+      local: "/train-displays/mita/sugamo-local.gif",
     },
     takashimadaira: {
       local: "/train-displays/mita/takashimadaira-local.gif",
@@ -96,6 +106,40 @@ const imageManifest: ImageManifest = {
     nishitakashimadaira: {
       local: "/train-displays/mita/nishi-takashimadaira-local.gif",
       express: "/train-displays/mita/nishi-takashimadaira-express.gif",
+    },
+    // 相鉄直通（outbound）
+    nishiya: {
+      local: "/train-displays/mita/nishiya-local.gif",
+      express: "/train-displays/mita/nishiya-express.gif",
+    },
+    hiyoshi: {
+      local: "/train-displays/mita/hiyoshi-local.gif",
+    },
+    musashikosugi: {
+      local: "/train-displays/mita/musashi-kosugi-local.gif",
+      express: "/train-displays/mita/musashi-kosugi-experss.gif",
+    },
+    "shin-yokohama": {
+      local: "/train-displays/mita/shin-yokohama-local.gif",
+      express: "/train-displays/mita/shin-yokohama-express.gif",
+    },
+    yamato: {
+      express: "/train-displays/mita/yamato-express.gif",
+    },
+    shonandai: {
+      local: "/train-displays/mita/shonandai-local.gif",
+      express: "/train-displays/mita/shonandai-express.gif",
+    },
+    ebina: {
+      local: "/train-displays/mita/ebina-local.gif",
+      express: "/train-displays/mita/ebina-express.gif",
+    },
+    // 南北線直通（inbound）
+    hatogaya: {
+      local: "/train-displays/mita/hatogaya-local.gif",
+    },
+    urawamisono: {
+      local: "/train-displays/mita/urawa-misono-local.gif",
     },
   },
 
@@ -117,6 +161,23 @@ const imageManifest: ImageManifest = {
     },
     tobudobutsukoen: {
       local: "/train-displays/hibiya/tobu-dobutsu-koen-local.gif",
+    },
+  },
+  "nex-shinjuku": {
+    shinjuku: {
+      express: "/train-displays/JR/shinjuku-narita-express.gif",
+    },
+    "narita-airport": {
+      express: "/train-displays/JR/narita-airport-express.gif",
+    },
+  },
+
+  "nex-ofuna": {
+    ofuna: {
+      express: "/train-displays/JR/ofuna-narita-express.gif",
+    },
+    "narita-airport": {
+      express: "/train-displays/JR/narita-airport-express.gif",
     },
   },
 };
@@ -146,6 +207,7 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
   },
 
   namboku: {
+    meguro: "meguro",
     akabaneiwabuchi: "akabaneiwabuchi",
     "akabane-iwabuchi": "akabaneiwabuchi",
     hatogaya: "hatogaya",
@@ -154,10 +216,26 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
   },
 
   mita: {
+    meguro: "meguro",
+    shirokanetakanawa: "shirokanetakanawa",
+    "shirokane-takanawa": "shirokanetakanawa",
+    sugamo: "sugamo",
     takashimadaira: "takashimadaira",
     "takashima-daira": "takashimadaira",
     nishitakashimadaira: "nishitakashimadaira",
     "nishi-takashimadaira": "nishitakashimadaira",
+    nishiya: "nishiya",
+    hiyoshi: "hiyoshi",
+    musashikosugi: "musashikosugi",
+    "musashi-kosugi": "musashikosugi",
+    "shin-yokohama": "shin-yokohama",
+    shinyokohama: "shin-yokohama",
+    yamato: "yamato",
+    shonandai: "shonandai",
+    ebina: "ebina",
+    hatogaya: "hatogaya",
+    urawamisono: "urawamisono",
+    "urawa-misono": "urawamisono",
   },
 
   hibiya: {
@@ -173,6 +251,17 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
     "kita-kasukabe": "kitakasukabe",
     tobudobutsukoen: "tobudobutsukoen",
     "tobu-dobutsu-koen": "tobudobutsukoen",
+  },
+  "nex-shinjuku": {
+    shinjuku: "shinjuku",
+    "narita-airport": "narita-airport",
+    naritaairport: "narita-airport",
+  },
+
+  "nex-ofuna": {
+    ofuna: "ofuna",
+    "narita-airport": "narita-airport",
+    naritaairport: "narita-airport",
   },
 };
 

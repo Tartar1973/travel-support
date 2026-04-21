@@ -168,20 +168,18 @@ export default function HomePage() {
               {okResults.map((candidate) => {
                 return (
                   <article key={`${candidate.destination}-${candidate.trainType}`} className="resultCard">
-                    <div className="resultRow">
                       <div className="resultImageBox">
                         <Image
                           src={candidate.image!}
                           alt={getCandidateTitle(candidate, line, language)}
                           fill
-                          sizes="(max-width: 640px) 48vw, 240px"
+                          sizes="(max-width: 640px) 95vw, 720px"
                           className="resultImage"
                           unoptimized
                           loading="eager"
                         />
                       </div>
                       <div className="resultBody">
-                        <div className="resultTitle">{getCandidateTitle(candidate, line, language)}</div>
                         <div className="resultTags">
                           <span className="tagChip">{getLineLabel(line, language)}</span>
                           <span className="tagChip">
@@ -196,7 +194,6 @@ export default function HomePage() {
                           )}
                         </div>
                       </div>
-                    </div>
                   </article>
                 );
               })}
@@ -331,23 +328,19 @@ export default function HomePage() {
           border-radius: 16px;
           padding: 10px;
           box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-        }
-
-        .resultRow {
           display: flex;
-          align-items: center;
-          gap: 12px;
+          flex-direction: column;
+          gap: 8px;
         }
 
         .resultImageBox {
           position: relative;
-          width: 240px;
-          height: 128px;
-          flex-shrink: 0;
+          width: 100%;
+          /* 433:73のアスペクト比 */
+          aspect-ratio: 433 / 73;
           overflow: hidden;
-          border-radius: 12px;
-          background: #ffffff;
-          border: 1px solid #d1fae5;
+          border-radius: 8px;
+          background: #000000;
         }
 
         .resultImage {
@@ -356,9 +349,6 @@ export default function HomePage() {
 
         .resultBody {
           min-width: 0;
-          flex: 1;
-          margin-left: 10px;
-          padding-top: 2px;
         }
 
         .resultTitle {
@@ -446,20 +436,6 @@ export default function HomePage() {
           }
           .sectionTitle {
             font-size: 17px;
-          }
-          .resultRow {
-            gap: 10px;
-          }
-          .resultImageBox {
-            width: 48vw;
-            height: 28vw;
-            max-width: 220px;
-            max-height: 124px;
-            min-width: 160px;
-            min-height: 90px;
-          }
-          .resultBody {
-            margin-left: 10px;
           }
           .resultTitle {
             font-size: 15px;

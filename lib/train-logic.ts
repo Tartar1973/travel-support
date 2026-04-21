@@ -115,6 +115,24 @@ const lineStationOrder: Record<LineKey, string[]> = {
     "kitakasukabe",
     "tobudobutsukoen",
   ],
+  "nex-shinjuku": [
+    "narita-airport",
+    "airport-terminal-2",
+    "tokyo",
+    "shinagawa",
+    "shibuya",
+    "shinjuku",
+  ],
+  "nex-ofuna": [
+    "narita-airport",
+    "airport-terminal-2",
+    "tokyo",
+    "shinagawa",
+    "musashikosugi-jr",
+    "yokohama",
+    "totsuka",
+    "ofuna",
+  ],
 };
 
 const lineDestinations: Record<
@@ -150,13 +168,36 @@ const lineDestinations: Record<
     { destination: "urawamisono", trainType: "express", direction: "inbound", platform: "2" },
   ],
   namboku: [
+    // outbound（目黒→終点方面）
     { destination: "akabaneiwabuchi", trainType: "local", direction: "outbound", platform: "1" },
     { destination: "hatogaya", trainType: "local", direction: "outbound", platform: "1" },
     { destination: "urawamisono", trainType: "local", direction: "outbound", platform: "1" },
+    // inbound（終点→目黒方面）
+    { destination: "meguro", trainType: "local", direction: "inbound", platform: "2" },
   ],
   mita: [
+    // outbound（目黒から離れる方向 = 三田線内終点方面）
     { destination: "takashimadaira", trainType: "local", direction: "outbound", platform: "1" },
     { destination: "nishitakashimadaira", trainType: "local", direction: "outbound", platform: "1" },
+    { destination: "takashimadaira", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "nishitakashimadaira", trainType: "express", direction: "outbound", platform: "1" },
+    // inbound（目黒に向かう方向 = 相鉄直通・南北線直通）
+    { destination: "nishiya", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "nishiya", trainType: "express", direction: "inbound", platform: "2" },
+    { destination: "hiyoshi", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "musashikosugi", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "musashikosugi", trainType: "express", direction: "inbound", platform: "2" },
+    { destination: "shin-yokohama", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "shin-yokohama", trainType: "express", direction: "inbound", platform: "2" },
+    { destination: "yamato", trainType: "express", direction: "inbound", platform: "2" },
+    { destination: "shonandai", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "shonandai", trainType: "express", direction: "inbound", platform: "2" },
+    { destination: "ebina", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "ebina", trainType: "express", direction: "inbound", platform: "2" },
+    { destination: "meguro", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "shirokanetakanawa", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "hatogaya", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "urawamisono", trainType: "local", direction: "inbound", platform: "2" },
   ],
   hibiya: [
     { destination: "hiroo", trainType: "local", direction: "inbound", platform: "2" },
@@ -165,6 +206,14 @@ const lineDestinations: Record<
     { destination: "kitakoshigaya", trainType: "local", direction: "outbound", platform: "2" },
     { destination: "kitakasukabe", trainType: "local", direction: "outbound", platform: "2" },
     { destination: "tobudobutsukoen", trainType: "local", direction: "outbound", platform: "2" },
+  ],
+  "nex-shinjuku": [
+    { destination: "shinjuku", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "narita-airport", trainType: "express", direction: "inbound", platform: "1" },
+  ],
+  "nex-ofuna": [
+    { destination: "ofuna", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "narita-airport", trainType: "express", direction: "inbound", platform: "1" },
   ],
 };
 
@@ -450,6 +499,12 @@ function canReachOnAnyPath(
   });
 }
 
+// 三田線から目黒線経由で相鉄直通する行先（lineStationOrderに含まれない）
+const MITA_SOTETSU_DESTINATIONS = new Set([
+  "hiyoshi", "musashikosugi", "shin-yokohama", "nishiya",
+  "yamato", "shonandai", "ebina",
+]);
+
 function canReachByLocal(
   line: LineKey,
   fromStation: string,
@@ -463,6 +518,16 @@ function canReachByLocal(
         ? MEGURO_LOCAL_OUTBOUND_PATHS
         : MEGURO_LOCAL_INBOUND_PATHS;
     return canReachOnAnyPath(paths, fromStation, toStation, destination);
+  }
+
+  // 三田線の相鉄直通行先: toStationが三田線内にある && inbound方向なら乗れる
+  if (line === "mita" && MITA_SOTETSU_DESTINATIONS.has(destination)) {
+    if (direction !== "inbound") return false;
+    const order = lineStationOrder[line];
+    const fromIndex = order.indexOf(fromStation);
+    const toIndex = order.indexOf(toStation);
+    // fromもtoも三田線内にある場合のみ表示
+    return fromIndex >= 0 && toIndex >= 0 && fromIndex > toIndex;
   }
 
   const order = lineStationOrder[line];
@@ -513,6 +578,11 @@ function isDirectionalCandidate(
         : MEGURO_LOCAL_INBOUND_PATHS;
 
     return canMoveForwardOnAnyPath(paths, fromStation, destination);
+  }
+
+  // 三田線の相鉄直通行先はlineStationOrderに含まれないので特別処理
+  if (line === "mita" && MITA_SOTETSU_DESTINATIONS.has(destination)) {
+    return direction === "inbound";
   }
 
   const order = lineStationOrder[line];
@@ -680,6 +750,17 @@ export function getTrainResults({
         item.destination,
         direction
       );
+    }
+
+    // NEX は lineStationOrder で到達判定
+    if ((line === "nex-shinjuku" || line === "nex-ofuna") && item.trainType === "express") {
+      const order = lineStationOrder[line];
+      const fromIndex = order.indexOf(fromStation);
+      const toIndex = order.indexOf(toStation);
+      const destIndex = order.indexOf(item.destination);
+      if (fromIndex < 0 || toIndex < 0 || destIndex < 0) return false;
+      if (direction === "outbound") return fromIndex < toIndex && destIndex >= toIndex;
+      return fromIndex > toIndex && destIndex <= toIndex;
     }
 
     return false;

@@ -1,4 +1,4 @@
-export type LineKey = "meguro" | "namboku" | "mita" | "hibiya";
+export type LineKey = "meguro" | "namboku" | "mita" | "hibiya" | "nex-shinjuku" | "nex-ofuna";
 
 export type Station = {
   key: string;
@@ -19,7 +19,6 @@ export const trainLines: Record<LineKey, TrainLine> = {
     ja: "目黒線",
     en: "Meguro Line",
     stations: [
-      // 目黒線内
       { key: "meguro", ja: "目黒", en: "Meguro" },
       { key: "fudomae", ja: "不動前", en: "Fudomae" },
       { key: "musashikoyama", ja: "武蔵小山", en: "Musashi-Koyama" },
@@ -40,6 +39,9 @@ export const trainLines: Record<LineKey, TrainLine> = {
       { key: "nishiya", ja: "西谷", en: "Nishiya" },
       { key: "tsurugamine", ja: "鶴ケ峰", en: "Tsurugamine" },
       { key: "futamatagawa", ja: "二俣川", en: "Futamatagawa" },
+      // 相鉄いずみ野線（湘南台方面）※二俣川から分岐
+      { key: "shonandai", ja: "湘南台", en: "Shonandai" },
+      // 相鉄本線（海老名方面）
       { key: "kibogaoka", ja: "希望ケ丘", en: "Kibogaoka" },
       { key: "mitsukyo", ja: "三ツ境", en: "Mitsukyo" },
       { key: "seya", ja: "瀬谷", en: "Seya" },
@@ -48,8 +50,6 @@ export const trainLines: Record<LineKey, TrainLine> = {
       { key: "sagamino", ja: "さがみ野", en: "Sagamino" },
       { key: "kashiwadai", ja: "かしわ台", en: "Kashiwadai" },
       { key: "ebina", ja: "海老名", en: "Ebina" },
-      // 相鉄いずみ野線（湘南台方面）※二俣川から分岐
-      { key: "shonandai", ja: "湘南台", en: "Shonandai" },
     ],
   },
 
@@ -139,6 +139,36 @@ export const trainLines: Record<LineKey, TrainLine> = {
       { key: "kitakoshigaya", ja: "北越谷", en: "Kita-Koshigaya" },
       { key: "kitakasukabe", ja: "北春日部", en: "Kita-Kasukabe" },
       { key: "tobudobutsukoen", ja: "東武動物公園", en: "Tobu-Dobutsu-Koen" },
+    ],
+  },
+
+  "nex-shinjuku": {
+    key: "nex-shinjuku",
+    ja: "成田エクスプレス（新宿方面）",
+    en: "Narita Express (Shinjuku)",
+    stations: [
+      { key: "narita-airport", ja: "成田空港", en: "Narita Airport" },
+      { key: "airport-terminal-2", ja: "空港第2ビル", en: "Airport Terminal 2" },
+      { key: "tokyo", ja: "東京", en: "Tokyo" },
+      { key: "shinagawa", ja: "品川", en: "Shinagawa" },
+      { key: "shibuya", ja: "渋谷", en: "Shibuya" },
+      { key: "shinjuku", ja: "新宿", en: "Shinjuku" },
+    ],
+  },
+
+  "nex-ofuna": {
+    key: "nex-ofuna",
+    ja: "成田エクスプレス（大船方面）",
+    en: "Narita Express (Ofuna)",
+    stations: [
+      { key: "narita-airport", ja: "成田空港", en: "Narita Airport" },
+      { key: "airport-terminal-2", ja: "空港第2ビル", en: "Airport Terminal 2" },
+      { key: "tokyo", ja: "東京", en: "Tokyo" },
+      { key: "shinagawa", ja: "品川", en: "Shinagawa" },
+      { key: "musashikosugi-jr", ja: "武蔵小杉", en: "Musashi-Kosugi" },
+      { key: "yokohama", ja: "横浜", en: "Yokohama" },
+      { key: "totsuka", ja: "戸塚", en: "Totsuka" },
+      { key: "ofuna", ja: "大船", en: "Ofuna" },
     ],
   },
 };
