@@ -67,6 +67,11 @@ const imageManifest: ImageManifest = {
     urawamisono: {
       express: "/train-displays/meguro/urawa-misono-express.gif",
     },
+    // 北行き（相鉄直通・西谷方面）
+    nishiya: {
+      local: "/train-displays/meguro/nishiya-local.gif",
+      express: "/train-displays/meguro/nishiya-express.gif",
+    },
   },
 
   namboku: {
@@ -219,6 +224,8 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
     hatogaya: "hatogaya",
     urawamisono: "urawamisono",
     "urawa-misono": "urawamisono",
+    // 北行き（相鉄直通）
+    nishiya: "nishiya",
   },
 
   namboku: {

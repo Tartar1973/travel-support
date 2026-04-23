@@ -329,6 +329,11 @@ const MEGURO_LOCAL_INBOUND_PATHS = [
   ],
   [
     "shonandai",
+     "izumino",        // ← 追加
+    "izumichuo",      // ← 追加
+    "yumegaoka",      // ← 追加
+    "futamatagawa",   // ← 追加
+    "nishiya",        // ← 追加
     "shin-yokohama",
     "shin-tsunashima",
     "hiyoshi",
@@ -352,6 +357,11 @@ const MEGURO_LOCAL_INBOUND_PATHS = [
   ],
   [
     "shonandai",
+     "izumino",        // ← 追加
+    "izumichuo",      // ← 追加
+    "yumegaoka",      // ← 追加
+    "futamatagawa",   // ← 追加
+    "nishiya",        // ← 追加
     "shin-yokohama",
     "shin-tsunashima",
     "hiyoshi",
@@ -447,18 +457,25 @@ function getDirection(
   fromStation: string,
   toStation: string
 ): "outbound" | "inbound" | null {
-  if (line === "meguro") {
-    return getDirectionFromPaths(
-      [
-        ...MEGURO_LOCAL_OUTBOUND_PATHS,
-        ...MEGURO_LOCAL_INBOUND_PATHS,
-        ...MEGURO_EXPRESS_OUTBOUND_PATHS,
-        ...MEGURO_EXPRESS_INBOUND_PATHS,
-      ],
-      fromStation,
-      toStation
-    );
+if (line === "meguro") {
+  // OUTBOUNDパスで判定
+  for (const path of [...MEGURO_LOCAL_OUTBOUND_PATHS, ...MEGURO_EXPRESS_OUTBOUND_PATHS]) {
+    const fromIndex = path.indexOf(fromStation);
+    const toIndex = path.indexOf(toStation);
+    if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
+      return toIndex > fromIndex ? "outbound" : "inbound";
+    }
   }
+  // INBOUNDパス専用駅（izumino等）の判定
+  for (const path of [...MEGURO_LOCAL_INBOUND_PATHS, ...MEGURO_EXPRESS_INBOUND_PATHS]) {
+    const fromIndex = path.indexOf(fromStation);
+    const toIndex = path.indexOf(toStation);
+    if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
+      return toIndex > fromIndex ? "inbound" : "outbound";
+    }
+  }
+  return null;
+}
 
   const order = lineStationOrder[line];
   const fromIndex = order.indexOf(fromStation);
@@ -705,7 +722,6 @@ export function getTrainResults({
   toStation,
 }: Params): TrainResult {
   const direction = getDirection(line, fromStation, toStation);
-
   if (!direction) {
     return { ok: [], ng: [] };
   }
@@ -738,7 +754,6 @@ export function getTrainResults({
       };
     })
     .filter((item) => !!item.image);
-
   const okRaw = candidates.filter((item) => {
     if (item.trainType === "local") {
       return canReachByLocal(

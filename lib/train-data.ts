@@ -40,6 +40,9 @@ export const trainLines: Record<LineKey, TrainLine> = {
       { key: "tsurugamine", ja: "鶴ケ峰", en: "Tsurugamine" },
       { key: "futamatagawa", ja: "二俣川", en: "Futamatagawa" },
       // 相鉄いずみ野線（湘南台方面）※二俣川から分岐
+      { key: "yumegaoka", ja: "ゆめが丘", en: "Yumegaoka" },
+      { key: "izumichuo", ja: "いずみ中央", en: "Izumi-Chuo" },
+      { key: "izumino", ja: "いずみ野", en: "Izumino" },
       { key: "shonandai", ja: "湘南台", en: "Shonandai" },
       // 相鉄本線（海老名方面）
       { key: "kibogaoka", ja: "希望ケ丘", en: "Kibogaoka" },
