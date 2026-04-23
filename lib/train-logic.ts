@@ -460,16 +460,16 @@ function getDirection(
   if (line === "meguro") {
     // OUTBOUNDパスで判定
     for (const path of [...MEGURO_LOCAL_OUTBOUND_PATHS, ...MEGURO_EXPRESS_OUTBOUND_PATHS]) {
-      const fromIndex = path.indexOf(fromStation);
-      const toIndex = path.indexOf(toStation);
+    const fromIndex = (path as readonly string[]).indexOf(fromStation);  // ← 修正
+  const toIndex = (path as readonly string[]).indexOf(toStation);      // ← 修正
       if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
         return toIndex > fromIndex ? "outbound" : "inbound";
       }
     }
     // INBOUNDパス専用駅（izumino等）の判定
     for (const path of [...MEGURO_LOCAL_INBOUND_PATHS, ...MEGURO_EXPRESS_INBOUND_PATHS]) {
-      const fromIndex = path.indexOf(fromStation);
-      const toIndex = path.indexOf(toStation);
+        const fromIndex = (path as readonly string[]).indexOf(fromStation);  // ← 修正
+  const toIndex = (path as readonly string[]).indexOf(toStation);      // ← 修正
       if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
         return toIndex > fromIndex ? "inbound" : "outbound";
       }
