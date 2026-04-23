@@ -457,34 +457,32 @@ function getDirection(
   fromStation: string,
   toStation: string
 ): "outbound" | "inbound" | null {
-if (line === "meguro") {
-  // OUTBOUNDパスで判定
-  for (const path of [...MEGURO_LOCAL_OUTBOUND_PATHS, ...MEGURO_EXPRESS_OUTBOUND_PATHS]) {
-    const fromIndex = path.indexOf(fromStation);
-    const toIndex = path.indexOf(toStation);
-    if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
-      return toIndex > fromIndex ? "outbound" : "inbound";
+  if (line === "meguro") {
+    // OUTBOUNDパスで判定
+    for (const path of [...MEGURO_LOCAL_OUTBOUND_PATHS, ...MEGURO_EXPRESS_OUTBOUND_PATHS]) {
+      const fromIndex = path.indexOf(fromStation);
+      const toIndex = path.indexOf(toStation);
+      if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
+        return toIndex > fromIndex ? "outbound" : "inbound";
+      }
     }
-  }
-  // INBOUNDパス専用駅（izumino等）の判定
-  for (const path of [...MEGURO_LOCAL_INBOUND_PATHS, ...MEGURO_EXPRESS_INBOUND_PATHS]) {
-    const fromIndex = path.indexOf(fromStation);
-    const toIndex = path.indexOf(toStation);
-    if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
-      return toIndex > fromIndex ? "inbound" : "outbound";
+    // INBOUNDパス専用駅（izumino等）の判定
+    for (const path of [...MEGURO_LOCAL_INBOUND_PATHS, ...MEGURO_EXPRESS_INBOUND_PATHS]) {
+      const fromIndex = path.indexOf(fromStation);
+      const toIndex = path.indexOf(toStation);
+      if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
+        return toIndex > fromIndex ? "inbound" : "outbound";
+      }
     }
+    return null;
   }
-  return null;
-}
 
   const order = lineStationOrder[line];
   const fromIndex = order.indexOf(fromStation);
   const toIndex = order.indexOf(toStation);
-
   if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return null;
   return toIndex > fromIndex ? "outbound" : "inbound";
 }
-
 function canBoardTrainTypeAtStation(
   line: LineKey,
   fromStation: string,
