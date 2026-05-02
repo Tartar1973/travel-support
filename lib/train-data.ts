@@ -1,4 +1,4 @@
-export type LineKey = "meguro" | "namboku" | "mita" | "hibiya" | "nex-shinjuku" | "nex-ofuna";
+export type LineKey = "meguro" | "namboku" | "mita" | "hibiya" | "nex-shinjuku" | "nex-ofuna" | "toyoko";
 
 export type Station = {
   key: string;
@@ -174,6 +174,63 @@ export const trainLines: Record<LineKey, TrainLine> = {
       { key: "yokohama", ja: "横浜", en: "Yokohama" },
       { key: "totsuka", ja: "戸塚", en: "Totsuka" },
       { key: "ofuna", ja: "大船", en: "Ofuna" },
+    ],
+  },
+
+  toyoko: {
+    key: "toyoko",
+    ja: "東横線",
+    en: "Toyoko Line",
+    stations: [
+      // 東横線本線（渋谷〜横浜）
+      { key: "shibuya", ja: "渋谷", en: "Shibuya" },
+      { key: "daikanyama", ja: "代官山", en: "Daikanyama" },
+      { key: "nakameguro", ja: "中目黒", en: "Nakameguro" },
+      { key: "yutenji", ja: "祐天寺", en: "Yutenji" },
+      { key: "gakugeidaigaku", ja: "学芸大学", en: "Gakugeidaigaku" },
+      { key: "toritsu-daigaku", ja: "都立大学", en: "Toritsu-Daigaku" },
+      { key: "jiyugaoka", ja: "自由が丘", en: "Jiyugaoka" },
+      { key: "denenchofu", ja: "田園調布", en: "Den-en-chofu" },
+      { key: "tamagawa", ja: "多摩川", en: "Tamagawa" },
+      { key: "musashikosugi", ja: "武蔵小杉", en: "Musashi-Kosugi" },
+      { key: "motosumiyoshi", ja: "元住吉", en: "Motosumiyoshi" },
+      { key: "hiyoshi", ja: "日吉", en: "Hiyoshi" },
+      { key: "tsunashima", ja: "綱島", en: "Tsunashima" },
+      { key: "oguchi", ja: "大倉山", en: "Oguchi" },
+      { key: "kikuna", ja: "菊名", en: "Kikuna" },
+      { key: "myorenji", ja: "妙蓮寺", en: "Myorenji" },
+      { key: "hakuraku", ja: "白楽", en: "Hakuraku" },
+      { key: "tokyokogyo-daigaku-mae", ja: "東白楽", en: "Higashi-Hakuraku" },
+      { key: "yokohama", ja: "横浜", en: "Yokohama" },
+      // みなとみらい線直通（横浜〜元町・中華街）
+      { key: "minatomirai", ja: "みなとみらい", en: "Minatomirai" },
+      { key: "bashamichi", ja: "馬車道", en: "Bashamichi" },
+      { key: "nihon-odori", ja: "日本大通り", en: "Nihon-Odori" },
+      { key: "motomachi-chukagai", ja: "元町・中華街", en: "Motomachi-Chukagai" },
+      // 桜木町（廃止済みだが行先表示として存在）
+      { key: "sakuragicho", ja: "桜木町", en: "Sakuragicho" },
+      // 副都心線直通（渋谷より北）
+      { key: "meiji-jingumae", ja: "明治神宮前", en: "Meiji-Jingumae" },
+      { key: "shinjuku-sanchome", ja: "新宿三丁目", en: "Shinjuku-Sanchome" },
+      { key: "higashi-shinjuku", ja: "東新宿", en: "Higashi-Shinjuku" },
+      { key: "nishi-waseda", ja: "西早稲田", en: "Nishi-Waseda" },
+      { key: "higashi-ikebukuro", ja: "東池袋", en: "Higashi-Ikebukuro" },
+      { key: "ikebukuro", ja: "池袋", en: "Ikebukuro" },
+      // 東武東上線直通
+      { key: "wakoshi", ja: "和光市", en: "Wakoshi" },
+      { key: "tsuruse", ja: "鶴瀬", en: "Tsuruse" },
+      { key: "fujimino", ja: "ふじみ野", en: "Fujimino" },
+      { key: "kawagoeshi", ja: "川越市", en: "Kawagoeshi" },
+      { key: "shinrin-koen", ja: "森林公園", en: "Shinrin-Koen" },
+      // 西武池袋線直通
+      { key: "shakujii-koen", ja: "石神井公園", en: "Shakujii-Koen" },
+      { key: "tokorozawa", ja: "所沢", en: "Tokorozawa" },
+      { key: "kiyose", ja: "清瀬", en: "Kiyose" },
+      { key: "kotesashi", ja: "小手指", en: "Kotesashi" },
+      // 相鉄直通（一部列車）
+      { key: "nishiya", ja: "西谷", en: "Nishiya" },
+      { key: "ebina", ja: "海老名", en: "Ebina" },
+      { key: "shonandai", ja: "湘南台", en: "Shonandai" },
     ],
   },
 };

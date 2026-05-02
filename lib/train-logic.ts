@@ -135,6 +135,33 @@ const lineStationOrder: Record<LineKey, string[]> = {
     "totsuka",
     "ofuna",
   ],
+  // NOTE: toyoko line は分岐路線のため、方向判定・到達判定には
+  // TOYOKO_*_PATHS を使用する。このリストは実際には参照されない。
+  toyoko: [
+    "shibuya",
+    "daikanyama",
+    "nakameguro",
+    "yutenji",
+    "gakugeidaigaku",
+    "toritsu-daigaku",
+    "jiyugaoka",
+    "denenchofu",
+    "tamagawa",
+    "musashikosugi",
+    "motosumiyoshi",
+    "hiyoshi",
+    "tsunashima",
+    "oguchi",
+    "kikuna",
+    "myorenji",
+    "hakuraku",
+    "tokyokogyo-daigaku-mae",
+    "yokohama",
+    "minatomirai",
+    "bashamichi",
+    "nihon-odori",
+    "motomachi-chukagai",
+  ],
 };
 
 const lineDestinations: Record<
@@ -162,7 +189,6 @@ const lineDestinations: Record<
     { destination: "hatogaya", trainType: "local", direction: "inbound", platform: "2" },
     { destination: "urawamisono", trainType: "local", direction: "inbound", platform: "2" },
 
-    // 目黒線直通の急行は「目黒行き」「大手町行き」などは出さない
     { destination: "takashimadaira", trainType: "express", direction: "inbound", platform: "2" },
     { destination: "nishitakashimadaira", trainType: "express", direction: "inbound", platform: "2" },
     { destination: "akabaneiwabuchi", trainType: "express", direction: "inbound", platform: "2" },
@@ -170,20 +196,16 @@ const lineDestinations: Record<
     { destination: "urawamisono", trainType: "express", direction: "inbound", platform: "2" },
   ],
   namboku: [
-    // outbound（目黒→終点方面）
     { destination: "akabaneiwabuchi", trainType: "local", direction: "outbound", platform: "1" },
     { destination: "hatogaya", trainType: "local", direction: "outbound", platform: "1" },
     { destination: "urawamisono", trainType: "local", direction: "outbound", platform: "1" },
-    // inbound（終点→目黒方面）
     { destination: "meguro", trainType: "local", direction: "inbound", platform: "2" },
   ],
   mita: [
-    // outbound（目黒から離れる方向 = 三田線内終点方面）
     { destination: "takashimadaira", trainType: "local", direction: "outbound", platform: "1" },
     { destination: "nishitakashimadaira", trainType: "local", direction: "outbound", platform: "1" },
     { destination: "takashimadaira", trainType: "express", direction: "outbound", platform: "1" },
     { destination: "nishitakashimadaira", trainType: "express", direction: "outbound", platform: "1" },
-    // inbound（目黒に向かう方向 = 相鉄直通・南北線直通）
     { destination: "nishiya", trainType: "local", direction: "inbound", platform: "2" },
     { destination: "nishiya", trainType: "express", direction: "inbound", platform: "2" },
     { destination: "hiyoshi", trainType: "local", direction: "inbound", platform: "2" },
@@ -222,17 +244,138 @@ const lineDestinations: Record<
     { destination: "ofuna", trainType: "express", direction: "outbound", platform: "1" },
     { destination: "narita-airport", trainType: "express", direction: "inbound", platform: "1" },
   ],
+
+  toyoko: [
+    // ── outbound（渋谷→横浜・元町中華街方面）──
+    // 各停
+    { destination: "musashikosugi", trainType: "local", direction: "outbound", platform: "1" },
+    { destination: "motosumiyoshi", trainType: "local", direction: "outbound", platform: "1" },
+    { destination: "hiyoshi", trainType: "local", direction: "outbound", platform: "1" },
+    { destination: "yokohama", trainType: "local", direction: "outbound", platform: "1" },
+    { destination: "motomachi-chukagai", trainType: "local", direction: "outbound", platform: "1" },
+    // 急行
+    { destination: "musashikosugi", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "motosumiyoshi", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "hiyoshi", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "yokohama", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "motomachi-chukagai", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "nishiya", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "ebina", trainType: "express", direction: "outbound", platform: "1" },
+    { destination: "shonandai", trainType: "express", direction: "outbound", platform: "1" },
+    // 通勤急行
+    { destination: "kikuna", trainType: "commuter-express", direction: "outbound", platform: "1" },
+    { destination: "hiyoshi", trainType: "commuter-express", direction: "outbound", platform: "1" },
+    { destination: "motosumiyoshi", trainType: "commuter-express", direction: "outbound", platform: "1" },
+    { destination: "sakuragicho", trainType: "commuter-express", direction: "outbound", platform: "1" },
+    { destination: "motomachi-chukagai", trainType: "commuter-express", direction: "outbound", platform: "1" },
+    // 通勤特急
+    { destination: "yokohama", trainType: "limited-express", direction: "outbound", platform: "1" },
+    { destination: "sakuragicho", trainType: "limited-express", direction: "outbound", platform: "1" },
+    { destination: "motomachi-chukagai", trainType: "limited-express", direction: "outbound", platform: "1" },
+    { destination: "motosumiyoshi", trainType: "limited-express", direction: "outbound", platform: "1" },
+
+    // ── inbound（横浜・元町中華街→渋谷、さらに副都心線・東武・西武直通）──
+    // 各停
+    { destination: "shibuya", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "ikebukuro", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "shakujii-koen", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "tokorozawa", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "kiyose", trainType: "local", direction: "inbound", platform: "2" },
+    { destination: "kotesashi", trainType: "local", direction: "inbound", platform: "2" },
+    // 急行
+    { destination: "shibuya", trainType: "express", direction: "inbound", platform: "2" },
+    { destination: "wakoshi", trainType: "express", direction: "inbound", platform: "2" },
+    { destination: "kotesashi", trainType: "express", direction: "inbound", platform: "2" },
+    // 通勤急行
+    { destination: "shibuya", trainType: "commuter-express", direction: "inbound", platform: "2" },
+    { destination: "wakoshi", trainType: "commuter-express", direction: "inbound", platform: "2" },
+    { destination: "kiyose", trainType: "commuter-express", direction: "inbound", platform: "2" },
+    { destination: "kotesashi", trainType: "commuter-express", direction: "inbound", platform: "2" },
+    { destination: "shinrin-koen", trainType: "commuter-express", direction: "inbound", platform: "2" },
+    // 通勤特急
+    { destination: "shibuya", trainType: "limited-express", direction: "inbound", platform: "2" },
+    { destination: "tokorozawa", trainType: "limited-express", direction: "inbound", platform: "2" },
+    { destination: "kiyose", trainType: "limited-express", direction: "inbound", platform: "2" },
+    { destination: "kotesashi", trainType: "limited-express", direction: "inbound", platform: "2" },
+    // Fライナー（特急）
+    { destination: "kotesashi", trainType: "f-liner", direction: "inbound", platform: "2" },
+    { destination: "shinrin-koen", trainType: "f-liner", direction: "inbound", platform: "2" },
+  ],
 };
 
 const expressStopsMeguro = new Set([
   "meguro",
-  "musashikoyama", // 武蔵小山
+  "musashikoyama",
   "ookayama",
   "denenchofu",
   "musashikosugi",
   "hiyoshi",
   "shin-yokohama",
   "ebina",
+]);
+
+// 東横線急行停車駅（渋谷〜横浜）
+const expressStopsToyoko = new Set([
+  "shibuya",
+  "nakameguro",
+  "jiyugaoka",
+  "musashikosugi",
+  "hiyoshi",
+  "kikuna",
+  "yokohama",
+  // みなとみらい線内全駅
+  "minatomirai",
+  "bashamichi",
+  "nihon-odori",
+  "motomachi-chukagai",
+]);
+
+// 東横線通勤特急停車駅（朝：横浜方面→渋谷、夕：渋谷→横浜方面）
+const limitedExpressStopsToyoko = new Set([
+  "shibuya",
+  "nakameguro",
+  "jiyugaoka",
+  "musashikosugi",
+  "motosumiyoshi",
+  "hiyoshi",
+  "kikuna",
+  "yokohama",
+  "minatomirai",
+  "bashamichi",
+  "nihon-odori",
+  "motomachi-chukagai",
+  "sakuragicho",
+]);
+
+// 東横線通勤急行停車駅
+const commuterExpressStopsToyoko = new Set([
+  "shibuya",
+  "nakameguro",
+  "jiyugaoka",
+  "musashikosugi",
+  "motosumiyoshi",
+  "hiyoshi",
+  "kikuna",
+  "yokohama",
+  "minatomirai",
+  "bashamichi",
+  "nihon-odori",
+  "motomachi-chukagai",
+  "sakuragicho",
+]);
+
+// 東横線Fライナー（特急）停車駅
+const fLinerStopsToyoko = new Set([
+  "shibuya",
+  "nakameguro",
+  "jiyugaoka",
+  "musashikosugi",
+  "hiyoshi",
+  "yokohama",
+  "minatomirai",
+  "bashamichi",
+  "nihon-odori",
+  "motomachi-chukagai",
 ]);
 
 const MEGURO_LOCAL_OUTBOUND_PATHS = [
@@ -329,11 +472,11 @@ const MEGURO_LOCAL_INBOUND_PATHS = [
   ],
   [
     "shonandai",
-     "izumino",        // ← 追加
-    "izumichuo",      // ← 追加
-    "yumegaoka",      // ← 追加
-    "futamatagawa",   // ← 追加
-    "nishiya",        // ← 追加
+    "izumino",
+    "izumichuo",
+    "yumegaoka",
+    "futamatagawa",
+    "nishiya",
     "shin-yokohama",
     "shin-tsunashima",
     "hiyoshi",
@@ -357,11 +500,11 @@ const MEGURO_LOCAL_INBOUND_PATHS = [
   ],
   [
     "shonandai",
-     "izumino",        // ← 追加
-    "izumichuo",      // ← 追加
-    "yumegaoka",      // ← 追加
-    "futamatagawa",   // ← 追加
-    "nishiya",        // ← 追加
+    "izumino",
+    "izumichuo",
+    "yumegaoka",
+    "futamatagawa",
+    "nishiya",
     "shin-yokohama",
     "shin-tsunashima",
     "hiyoshi",
@@ -437,6 +580,140 @@ const MEGURO_EXPRESS_INBOUND_PATHS = [
   ],
 ] as const;
 
+// ── 東横線 パス定義 ──
+// outbound: 渋谷→元町・中華街（+ 相鉄直通）
+const TOYOKO_OUTBOUND_PATHS = [
+  // 通常：渋谷→横浜→元町中華街
+  [
+    "shibuya", "daikanyama", "nakameguro", "yutenji", "gakugeidaigaku",
+    "toritsu-daigaku", "jiyugaoka", "denenchofu", "tamagawa",
+    "musashikosugi", "motosumiyoshi", "hiyoshi", "tsunashima", "oguchi",
+    "kikuna", "myorenji", "hakuraku", "tokyokogyo-daigaku-mae",
+    "yokohama", "minatomirai", "bashamichi", "nihon-odori", "motomachi-chukagai",
+  ],
+  // 桜木町行き（一部）
+  [
+    "shibuya", "daikanyama", "nakameguro", "yutenji", "gakugeidaigaku",
+    "toritsu-daigaku", "jiyugaoka", "denenchofu", "tamagawa",
+    "musashikosugi", "motosumiyoshi", "hiyoshi", "tsunashima", "oguchi",
+    "kikuna", "myorenji", "hakuraku", "tokyokogyo-daigaku-mae",
+    "yokohama", "sakuragicho",
+  ],
+  // 相鉄直通（西谷・海老名・湘南台）
+  [
+    "shibuya", "daikanyama", "nakameguro", "yutenji", "gakugeidaigaku",
+    "toritsu-daigaku", "jiyugaoka", "denenchofu", "tamagawa",
+    "musashikosugi", "motosumiyoshi", "hiyoshi", "tsunashima", "oguchi",
+    "kikuna", "myorenji", "hakuraku", "tokyokogyo-daigaku-mae",
+    "yokohama", "nishiya", "ebina",
+  ],
+  [
+    "shibuya", "daikanyama", "nakameguro", "yutenji", "gakugeidaigaku",
+    "toritsu-daigaku", "jiyugaoka", "denenchofu", "tamagawa",
+    "musashikosugi", "motosumiyoshi", "hiyoshi", "tsunashima", "oguchi",
+    "kikuna", "myorenji", "hakuraku", "tokyokogyo-daigaku-mae",
+    "yokohama", "nishiya", "shonandai",
+  ],
+] as const;
+
+// inbound: 元町・中華街→渋谷→副都心線・東武・西武直通
+const TOYOKO_INBOUND_PATHS = [
+  // 副都心線→東武東上線（森林公園・川越市方面）
+  [
+    "motomachi-chukagai", "nihon-odori", "bashamichi", "minatomirai",
+    "yokohama", "tokyokogyo-daigaku-mae", "hakuraku", "myorenji",
+    "kikuna", "oguchi", "tsunashima", "hiyoshi", "motosumiyoshi",
+    "musashikosugi", "tamagawa", "denenchofu", "jiyugaoka",
+    "toritsu-daigaku", "gakugeidaigaku", "yutenji", "nakameguro",
+    "daikanyama", "shibuya",
+    "meiji-jingumae", "shinjuku-sanchome", "higashi-shinjuku",
+    "nishi-waseda", "higashi-ikebukuro", "ikebukuro",
+    "wakoshi", "tsuruse", "fujimino", "kawagoeshi", "shinrin-koen",
+  ],
+  // 副都心線→西武池袋線（所沢・小手指・清瀬方面）
+  [
+    "motomachi-chukagai", "nihon-odori", "bashamichi", "minatomirai",
+    "yokohama", "tokyokogyo-daigaku-mae", "hakuraku", "myorenji",
+    "kikuna", "oguchi", "tsunashima", "hiyoshi", "motosumiyoshi",
+    "musashikosugi", "tamagawa", "denenchofu", "jiyugaoka",
+    "toritsu-daigaku", "gakugeidaigaku", "yutenji", "nakameguro",
+    "daikanyama", "shibuya",
+    "meiji-jingumae", "shinjuku-sanchome", "higashi-shinjuku",
+    "nishi-waseda", "higashi-ikebukuro", "ikebukuro",
+    "shakujii-koen", "tokorozawa", "kiyose", "kotesashi",
+  ],
+  // 渋谷止まり（副都心線直通なし）
+  [
+    "motomachi-chukagai", "nihon-odori", "bashamichi", "minatomirai",
+    "yokohama", "tokyokogyo-daigaku-mae", "hakuraku", "myorenji",
+    "kikuna", "oguchi", "tsunashima", "hiyoshi", "motosumiyoshi",
+    "musashikosugi", "tamagawa", "denenchofu", "jiyugaoka",
+    "toritsu-daigaku", "gakugeidaigaku", "yutenji", "nakameguro",
+    "daikanyama", "shibuya",
+  ],
+  // 桜木町発
+  [
+    "sakuragicho", "yokohama", "tokyokogyo-daigaku-mae", "hakuraku", "myorenji",
+    "kikuna", "oguchi", "tsunashima", "hiyoshi", "motosumiyoshi",
+    "musashikosugi", "tamagawa", "denenchofu", "jiyugaoka",
+    "toritsu-daigaku", "gakugeidaigaku", "yutenji", "nakameguro",
+    "daikanyama", "shibuya",
+    "meiji-jingumae", "shinjuku-sanchome", "higashi-shinjuku",
+    "nishi-waseda", "higashi-ikebukuro", "ikebukuro",
+    "wakoshi", "tsuruse", "fujimino", "kawagoeshi", "shinrin-koen",
+  ],
+  // 相鉄直通（海老名→横浜→渋谷→西武・東武方面）
+  [
+    "ebina", "nishiya",
+    "yokohama", "tokyokogyo-daigaku-mae", "hakuraku", "myorenji",
+    "kikuna", "oguchi", "tsunashima", "hiyoshi", "motosumiyoshi",
+    "musashikosugi", "tamagawa", "denenchofu", "jiyugaoka",
+    "toritsu-daigaku", "gakugeidaigaku", "yutenji", "nakameguro",
+    "daikanyama", "shibuya",
+    "meiji-jingumae", "shinjuku-sanchome", "higashi-shinjuku",
+    "nishi-waseda", "higashi-ikebukuro", "ikebukuro",
+    "wakoshi", "tsuruse", "fujimino", "kawagoeshi", "shinrin-koen",
+  ],
+  // 相鉄直通（湘南台→横浜→渋谷→西武・東武方面）
+  [
+    "shonandai", "nishiya",
+    "yokohama", "tokyokogyo-daigaku-mae", "hakuraku", "myorenji",
+    "kikuna", "oguchi", "tsunashima", "hiyoshi", "motosumiyoshi",
+    "musashikosugi", "tamagawa", "denenchofu", "jiyugaoka",
+    "toritsu-daigaku", "gakugeidaigaku", "yutenji", "nakameguro",
+    "daikanyama", "shibuya",
+    "meiji-jingumae", "shinjuku-sanchome", "higashi-shinjuku",
+    "nishi-waseda", "higashi-ikebukuro", "ikebukuro",
+    "wakoshi", "tsuruse", "fujimino", "kawagoeshi", "shinrin-koen",
+  ],
+] as const;
+
+function canMoveForwardOnAnyPath(
+  paths: readonly (readonly string[])[],
+  fromStation: string,
+  destination: string
+) {
+  return paths.some((path) => {
+    const fromIndex = path.indexOf(fromStation);
+    const destIndex = path.indexOf(destination);
+    return fromIndex >= 0 && destIndex > fromIndex;
+  });
+}
+
+function canReachOnAnyPath(
+  paths: readonly (readonly string[])[],
+  fromStation: string,
+  toStation: string,
+  destination: string
+) {
+  return paths.some((path) => {
+    const fromIndex = path.indexOf(fromStation);
+    const toIndex = path.indexOf(toStation);
+    const destIndex = path.indexOf(destination);
+    return fromIndex >= 0 && toIndex > fromIndex && destIndex >= toIndex;
+  });
+}
+
 function getDirectionFromPaths(
   paths: readonly (readonly string[])[],
   fromStation: string,
@@ -475,12 +752,24 @@ function getDirection(
     return null;
   }
 
+  if (line === "toyoko") {
+    // outbound方向を先に確認
+    const outDir = getDirectionFromPaths(TOYOKO_OUTBOUND_PATHS, fromStation, toStation);
+    if (outDir) return outDir;
+    // inbound方向（inboundパスでは進む方向がinbound）
+    const inDir = getDirectionFromPaths(TOYOKO_INBOUND_PATHS, fromStation, toStation);
+    if (inDir === "outbound") return "inbound"; // inboundパス上で進む = inbound
+    if (inDir === "inbound") return "outbound"; // inboundパス上で逆 = outbound
+    return null;
+  }
+
   const order = lineStationOrder[line];
   const fromIndex = order.indexOf(fromStation);
   const toIndex = order.indexOf(toStation);
   if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return null;
   return toIndex > fromIndex ? "outbound" : "inbound";
 }
+
 function canBoardTrainTypeAtStation(
   line: LineKey,
   fromStation: string,
@@ -490,33 +779,13 @@ function canBoardTrainTypeAtStation(
   if (line === "meguro" && trainType === "express") {
     return expressStopsMeguro.has(fromStation);
   }
+  if (line === "toyoko") {
+    if (trainType === "express") return expressStopsToyoko.has(fromStation);
+    if (trainType === "limited-express") return limitedExpressStopsToyoko.has(fromStation);
+    if (trainType === "commuter-express") return commuterExpressStopsToyoko.has(fromStation);
+    if (trainType === "f-liner") return fLinerStopsToyoko.has(fromStation);
+  }
   return true;
-}
-
-function canMoveForwardOnAnyPath(
-  paths: readonly (readonly string[])[],
-  fromStation: string,
-  destination: string
-) {
-  return paths.some((path) => {
-    const fromIndex = path.indexOf(fromStation);
-    const destIndex = path.indexOf(destination);
-    return fromIndex >= 0 && destIndex > fromIndex;
-  });
-}
-
-function canReachOnAnyPath(
-  paths: readonly (readonly string[])[],
-  fromStation: string,
-  toStation: string,
-  destination: string
-) {
-  return paths.some((path) => {
-    const fromIndex = path.indexOf(fromStation);
-    const toIndex = path.indexOf(toStation);
-    const destIndex = path.indexOf(destination);
-    return fromIndex >= 0 && toIndex > fromIndex && destIndex >= toIndex;
-  });
 }
 
 // 三田線から目黒線経由で相鉄直通する行先（lineStationOrderに含まれない）
@@ -524,6 +793,9 @@ const MITA_SOTETSU_DESTINATIONS = new Set([
   "hiyoshi", "musashikosugi", "shin-yokohama", "nishiya",
   "yamato", "shonandai", "ebina",
 ]);
+
+// 東横線から相鉄直通する行先（渋谷方向への到達判定で特別扱い）
+const TOYOKO_SOTETSU_DESTINATIONS = new Set(["nishiya", "ebina", "shonandai"]);
 
 function canReachByLocal(
   line: LineKey,
@@ -540,13 +812,18 @@ function canReachByLocal(
     return canReachOnAnyPath(paths, fromStation, toStation, destination);
   }
 
+  if (line === "toyoko") {
+    const paths =
+      direction === "outbound" ? TOYOKO_OUTBOUND_PATHS : TOYOKO_INBOUND_PATHS;
+    return canReachOnAnyPath(paths, fromStation, toStation, destination);
+  }
+
   // 三田線の相鉄直通行先: toStationが三田線内にある && inbound方向なら乗れる
   if (line === "mita" && MITA_SOTETSU_DESTINATIONS.has(destination)) {
     if (direction !== "inbound") return false;
     const order = lineStationOrder[line];
     const fromIndex = order.indexOf(fromStation);
     const toIndex = order.indexOf(toStation);
-    // fromもtoも三田線内にある場合のみ表示
     return fromIndex >= 0 && toIndex >= 0 && fromIndex > toIndex;
   }
 
@@ -580,6 +857,28 @@ function canReachByExpressMeguro(
   return canReachOnAnyPath(paths, fromStation, toStation, destination);
 }
 
+function canReachByExpressToyoko(
+  fromStation: string,
+  toStation: string,
+  destination: string,
+  direction: "outbound" | "inbound",
+  trainType: TrainTypeKey
+) {
+  const stopSet =
+    trainType === "f-liner" ? fLinerStopsToyoko :
+    trainType === "limited-express" ? limitedExpressStopsToyoko :
+    trainType === "commuter-express" ? commuterExpressStopsToyoko :
+    expressStopsToyoko;
+
+  if (!stopSet.has(fromStation)) return false;
+  if (!stopSet.has(toStation)) return false;
+
+  const paths =
+    direction === "outbound" ? TOYOKO_OUTBOUND_PATHS : TOYOKO_INBOUND_PATHS;
+
+  return canReachOnAnyPath(paths, fromStation, toStation, destination);
+}
+
 function isDirectionalCandidate(
   line: LineKey,
   fromStation: string,
@@ -597,6 +896,12 @@ function isDirectionalCandidate(
         ? MEGURO_LOCAL_OUTBOUND_PATHS
         : MEGURO_LOCAL_INBOUND_PATHS;
 
+    return canMoveForwardOnAnyPath(paths, fromStation, destination);
+  }
+
+  if (line === "toyoko") {
+    const paths =
+      direction === "outbound" ? TOYOKO_OUTBOUND_PATHS : TOYOKO_INBOUND_PATHS;
     return canMoveForwardOnAnyPath(paths, fromStation, destination);
   }
 
@@ -630,8 +935,28 @@ function sortIndexForMeguro(direction: "outbound" | "inbound", station: string) 
   return Number.MAX_SAFE_INTEGER;
 }
 
+function sortIndexForToyoko(direction: "outbound" | "inbound", station: string) {
+  const paths = direction === "outbound" ? TOYOKO_OUTBOUND_PATHS : TOYOKO_INBOUND_PATHS;
+  const primaryPath = paths[0];
+  const index = primaryPath.indexOf(station);
+  if (index >= 0) return index;
+  for (const path of paths) {
+    const otherIndex = (path as readonly string[]).indexOf(station);
+    if (otherIndex >= 0) return otherIndex;
+  }
+  return Number.MAX_SAFE_INTEGER;
+}
+
 function servicePriority(trainType: TrainTypeKey) {
-  return trainType === "local" ? 0 : 1;
+  // 各停 < 急行 < 通勤急行 < 通勤特急 < Fライナー の順
+  const order: Record<TrainTypeKey, number> = {
+    "local": 0,
+    "express": 1,
+    "commuter-express": 2,
+    "limited-express": 3,
+    "f-liner": 4,
+  };
+  return order[trainType] ?? 0;
 }
 
 function sortRecommended(
@@ -645,6 +970,21 @@ function sortRecommended(
     return [...items].sort((a, b) => {
       const aIndex = sortIndexForMeguro(direction, a.destination);
       const bIndex = sortIndexForMeguro(direction, b.destination);
+      const aDistance = aIndex - toIndex;
+      const bDistance = bIndex - toIndex;
+      if (aDistance !== bDistance) return aDistance - bDistance;
+      if (servicePriority(a.trainType) !== servicePriority(b.trainType)) {
+        return servicePriority(a.trainType) - servicePriority(b.trainType);
+      }
+      return a.destination.localeCompare(b.destination);
+    });
+  }
+
+  if (line === "toyoko") {
+    const toIndex = sortIndexForToyoko(direction, toStation);
+    return [...items].sort((a, b) => {
+      const aIndex = sortIndexForToyoko(direction, a.destination);
+      const bIndex = sortIndexForToyoko(direction, b.destination);
       const aDistance = aIndex - toIndex;
       const bDistance = bIndex - toIndex;
       if (aDistance !== bDistance) return aDistance - bDistance;
@@ -694,6 +1034,21 @@ function sortAvoid(
     });
   }
 
+  if (line === "toyoko") {
+    const fromIndex = sortIndexForToyoko(direction, fromStation);
+    return [...items].sort((a, b) => {
+      const aIndex = sortIndexForToyoko(direction, a.destination);
+      const bIndex = sortIndexForToyoko(direction, b.destination);
+      const aDistance = aIndex - fromIndex;
+      const bDistance = bIndex - fromIndex;
+      if (aDistance !== bDistance) return aDistance - bDistance;
+      if (servicePriority(a.trainType) !== servicePriority(b.trainType)) {
+        return servicePriority(a.trainType) - servicePriority(b.trainType);
+      }
+      return a.destination.localeCompare(b.destination);
+    });
+  }
+
   const order = lineStationOrder[line];
   const fromIndex = order.indexOf(fromStation);
 
@@ -724,7 +1079,6 @@ export function getTrainResults({
 
   const candidates = lineDestinations[line]
     .filter((item) => {
-      // エントリの方向と実際の移動方向が一致するもののみ通す
       if (item.direction !== direction) {
         return false;
       }
@@ -750,6 +1104,7 @@ export function getTrainResults({
       };
     })
     .filter((item) => !!item.image);
+
   const okRaw = candidates.filter((item) => {
     if (item.trainType === "local") {
       return canReachByLocal(
@@ -770,6 +1125,21 @@ export function getTrainResults({
       );
     }
 
+    if (line === "toyoko" && (
+      item.trainType === "express" ||
+      item.trainType === "commuter-express" ||
+      item.trainType === "limited-express" ||
+      item.trainType === "f-liner"
+    )) {
+      return canReachByExpressToyoko(
+        fromStation,
+        toStation,
+        item.destination,
+        direction,
+        item.trainType
+      );
+    }
+
     // NEX は lineStationOrder で到達判定
     if ((line === "nex-shinjuku" || line === "nex-ofuna") && item.trainType === "express") {
       const order = lineStationOrder[line];
@@ -783,11 +1153,9 @@ export function getTrainResults({
 
     // 三田線急行（相鉄直通含む）の到達判定
     if (line === "mita" && item.trainType === "express") {
-      // 相鉄直通行先はlineStationOrderにないので、inboundなら常にOK
       if (MITA_SOTETSU_DESTINATIONS.has(item.destination)) {
         return direction === "inbound";
       }
-      // 通常行先はlineStationOrderで判定
       return canReachByLocal(line, fromStation, toStation, item.destination, direction);
     }
 

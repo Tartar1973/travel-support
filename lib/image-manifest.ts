@@ -1,6 +1,6 @@
 import type { LineKey } from "./train-data";
 
-export type TrainTypeKey = "local" | "express";
+export type TrainTypeKey = "local" | "express" | "commuter-express" | "limited-express" | "f-liner";
 
 type ImageManifest = Partial<
   Record<LineKey, Partial<Record<string, Partial<Record<TrainTypeKey, string>>>>>
@@ -183,6 +183,7 @@ const imageManifest: ImageManifest = {
       local: "/train-displays/hibiya/minami-kurihashi-local.gif",
     },
   },
+
   "nex-shinjuku": {
     shinjuku: {
       express: "/train-displays/JR/shinjuku-narita-express.gif",
@@ -200,6 +201,90 @@ const imageManifest: ImageManifest = {
       express: "/train-displays/JR/narita-airport-express.gif",
     },
   },
+
+  toyoko: {
+    // ── 渋谷方面（inbound）──
+    shibuya: {
+      local: "/train-displays/toyoko/shibuya-local.gif",
+      express: "/train-displays/toyoko/shibuya-express.gif",
+      "commuter-express": "/train-displays/toyoko/shibuya-commuter-express.gif",
+      "limited-express": "/train-displays/toyoko/shibuya-limited-express.gif",
+    },
+    // ── 横浜・元町中華街方面（outbound）──
+    kikuna: {
+      "commuter-express": "/train-displays/toyoko/kikuna-commuter-express.gif",
+    },
+    hiyoshi: {
+      local: "/train-displays/toyoko/hiyoshi-local.gif",
+      express: "/train-displays/toyoko/hiyoshi-express.gif",
+      "commuter-express": "/train-displays/toyoko/hiyoshi-commuter-express.gif",
+    },
+    musashikosugi: {
+      local: "/train-displays/toyoko/musashi-kosugi-local.gif",
+      express: "/train-displays/toyoko/musashi-kosugi-express.gif",
+    },
+    motosumiyoshi: {
+      local: "/train-displays/toyoko/motosumiyoshi-local.gif",
+      express: "/train-displays/toyoko/motosumiyoshi-express.gif",
+      "commuter-express": "/train-displays/toyoko/motosumiyoshi-commuter-express.gif",
+      "limited-express": "/train-displays/toyoko/motosumiyoshi-limited-express.gif",
+    },
+    sakuragicho: {
+      local: "/train-displays/toyoko/sakuragicho-local.gif",        // ← 未確認・要追加
+      express: "/train-displays/toyoko/sakuragicho-express.gif",
+      "commuter-express": "/train-displays/toyoko/sakuragicho-commuter-express.gif",
+      "limited-express": "/train-displays/toyoko/sakuragicho-limited-express.gif",
+    },
+    yokohama: {
+      express: "/train-displays/toyoko/yokohama-express.gif",
+      "limited-express": "/train-displays/toyoko/yokohama-limited-express.gif",
+    },
+    "motomachi-chukagai": {
+      local: "/train-displays/toyoko/motomachi-chukagai-local.gif",
+      express: "/train-displays/toyoko/motomachi-chukagai-express.gif",
+      "commuter-express": "/train-displays/toyoko/motomachi-chukagai-commuter-express.gif",
+      "limited-express": "/train-displays/toyoko/motomachi-chukagai-limited-express.gif",
+    },
+    // ── 副都心線・東武・西武直通（outbound方向、渋谷より先）──
+    ikebukuro: {
+      local: "/train-displays/toyoko/ikebukuro-local.gif",
+    },
+    "shakujii-koen": {
+      local: "/train-displays/toyoko/shakujii-koen-local.gif",
+    },
+    wakoshi: {
+      express: "/train-displays/toyoko/wakoshi-express.gif",
+      "commuter-express": "/train-displays/toyoko/wakoshi-commuter-express.gif",
+    },
+    nishiya: {
+      express: "/train-displays/toyoko/nishiya-express.gif",
+    },
+    ebina: {
+      express: "/train-displays/toyoko/ebina-express.gif",
+    },
+    shonandai: {
+      express: "/train-displays/toyoko/shonandai-express.gif",
+    },
+    tokorozawa: {
+      local: "/train-displays/toyoko/tokorozawa-local.gif",
+      "limited-express": "/train-displays/toyoko/tokorozawa-limited-express.gif",
+    },
+    kiyose: {
+      local: "/train-displays/toyoko/kiyose-local.gif",
+      "commuter-express": "/train-displays/toyoko/kiyose-commuter-express.gif",
+    },
+    kotesashi: {
+      local: "/train-displays/toyoko/kotesashi-local.gif",
+      express: "/train-displays/toyoko/kotesashi-express.gif",
+      "commuter-express": "/train-displays/toyoko/kotesashi-commuter-express.gif",
+      "limited-express": "/train-displays/toyoko/kotesashi-limited-express.gif",
+      "f-liner": "/train-displays/toyoko/kotesashi-f-liner.gif",
+    },
+    "shinrin-koen": {
+      "commuter-express": "/train-displays/toyoko/shinrin-koen-commuter-express.gif",
+      "f-liner": "/train-displays/toyoko/shinrin-koen-f-liner.gif",
+    },
+  },
 };
 
 const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
@@ -214,17 +299,14 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
     ebina: "ebina",
     shonandai: "shonandai",
     kashiwadai: "kashiwadai",
-    // 北行き（三田線直通）
     takashimadaira: "takashimadaira",
     nishitakashimadaira: "nishitakashimadaira",
     "nishi-takashimadaira": "nishitakashimadaira",
-    // 北行き（南北線直通）
     akabaneiwabuchi: "akabaneiwabuchi",
     "akabane-iwabuchi": "akabaneiwabuchi",
     hatogaya: "hatogaya",
     urawamisono: "urawamisono",
     "urawa-misono": "urawamisono",
-    // 北行き（相鉄直通）
     nishiya: "nishiya",
   },
 
@@ -282,6 +364,7 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
     minamikurihashi: "minamikurihashi",
     "minami-kurihashi": "minamikurihashi",
   },
+
   "nex-shinjuku": {
     shinjuku: "shinjuku",
     "narita-airport": "narita-airport",
@@ -292,6 +375,31 @@ const lineAliases: Partial<Record<LineKey, Record<string, string>>> = {
     ofuna: "ofuna",
     "narita-airport": "narita-airport",
     naritaairport: "narita-airport",
+  },
+
+  toyoko: {
+    shibuya: "shibuya",
+    kikuna: "kikuna",
+    hiyoshi: "hiyoshi",
+    musashikosugi: "musashikosugi",
+    "musashi-kosugi": "musashikosugi",
+    motosumiyoshi: "motosumiyoshi",
+    sakuragicho: "sakuragicho",
+    yokohama: "yokohama",
+    "motomachi-chukagai": "motomachi-chukagai",
+    motomachiChukagai: "motomachi-chukagai",
+    ikebukuro: "ikebukuro",
+    "shakujii-koen": "shakujii-koen",
+    shakujiikoen: "shakujii-koen",
+    wakoshi: "wakoshi",
+    nishiya: "nishiya",
+    ebina: "ebina",
+    shonandai: "shonandai",
+    tokorozawa: "tokorozawa",
+    kiyose: "kiyose",
+    kotesashi: "kotesashi",
+    "shinrin-koen": "shinrin-koen",
+    shinrinkoen: "shinrin-koen",
   },
 };
 
@@ -329,7 +437,6 @@ export function getImagePath(
 
   if (!dest) return undefined;
 
-  // trainTypeに対応する画像がない場合はundefinedを返す（異種別へのフォールバックをしない）
   return dest[trainType];
 }
 
