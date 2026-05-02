@@ -937,7 +937,7 @@ function sortIndexForMeguro(direction: "outbound" | "inbound", station: string) 
 
 function sortIndexForToyoko(direction: "outbound" | "inbound", station: string) {
   const paths = direction === "outbound" ? TOYOKO_OUTBOUND_PATHS : TOYOKO_INBOUND_PATHS;
-  const primaryPath = paths[0];
+  const primaryPath = paths[0] as readonly string[];
   const index = primaryPath.indexOf(station);
   if (index >= 0) return index;
   for (const path of paths) {
