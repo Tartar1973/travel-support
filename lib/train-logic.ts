@@ -582,7 +582,7 @@ const MEGURO_EXPRESS_INBOUND_PATHS = [
 
 // ── 東横線 パス定義 ──
 // outbound: 渋谷→元町・中華街（+ 相鉄直通）
-const TOYOKO_OUTBOUND_PATHS = [
+const TOYOKO_OUTBOUND_PATHS: readonly (readonly string[])[] = [
   // 通常：渋谷→横浜→元町中華街
   [
     "shibuya", "daikanyama", "nakameguro", "yutenji", "gakugeidaigaku",
@@ -614,10 +614,10 @@ const TOYOKO_OUTBOUND_PATHS = [
     "kikuna", "myorenji", "hakuraku", "tokyokogyo-daigaku-mae",
     "yokohama", "nishiya", "shonandai",
   ],
-] as const;
+];
 
 // inbound: 元町・中華街→渋谷→副都心線・東武・西武直通
-const TOYOKO_INBOUND_PATHS = [
+const TOYOKO_INBOUND_PATHS: readonly (readonly string[])[] = [
   // 副都心線→東武東上線（森林公園・川越市方面）
   [
     "motomachi-chukagai", "nihon-odori", "bashamichi", "minatomirai",
@@ -686,7 +686,7 @@ const TOYOKO_INBOUND_PATHS = [
     "nishi-waseda", "higashi-ikebukuro", "ikebukuro",
     "wakoshi", "tsuruse", "fujimino", "kawagoeshi", "shinrin-koen",
   ],
-] as const;
+];
 
 function canMoveForwardOnAnyPath(
   paths: readonly (readonly string[])[],
