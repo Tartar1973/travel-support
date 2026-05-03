@@ -149,8 +149,8 @@ export const trainLines: Record<LineKey, TrainLine> = {
 
   "nex-shinjuku": {
     key: "nex-shinjuku",
-    ja: "成田エクスプレス（新宿方面）",
-    en: "Narita Express (Shinjuku)",
+    ja: "JR 成田エクスプレス（新宿方面）",
+    en: "JR Narita Express (Shinjuku)",
     stations: [
       { key: "narita-airport", ja: "成田空港", en: "Narita Airport" },
       { key: "airport-terminal-2", ja: "空港第2ビル", en: "Airport Terminal 2" },
@@ -163,8 +163,8 @@ export const trainLines: Record<LineKey, TrainLine> = {
 
   "nex-ofuna": {
     key: "nex-ofuna",
-    ja: "成田エクスプレス（大船方面）",
-    en: "Narita Express (Ofuna)",
+    ja: "JR 成田エクスプレス（大船方面）",
+    en: "JR Narita Express (Ofuna)",
     stations: [
       { key: "narita-airport", ja: "成田空港", en: "Narita Airport" },
       { key: "airport-terminal-2", ja: "空港第2ビル", en: "Airport Terminal 2" },
