@@ -1,504 +1,461 @@
-import { useMemo, useState } from "react";
-import Image from "next/image";
-import {
-  trainLines,
-  getLineLabel,
-  getStationLabel,
-  type LineKey,
-} from "../lib/train-data";
-import { getTrainResults } from "../lib/train-logic";
+import Head from 'next/head';
+import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
+import { trainLines, getLineLabel, getStationLabel } from '../lib/train-data';
+import { getTrainResults } from '../lib/train-logic';
+import type { LineKey } from '../lib/train-data';
+import type { TrainCandidate } from '../lib/train-logic';
 
-type Lang = "ja" | "en";
+type Language = 'en' | 'ja';
 
-const uiText = {
-  ja: {
-    title: "Train Support",
-    subtitle: "この表示なら乗ってOKをわかりやすく案内します",
-    languageButton: "English",
-    line: "路線",
-    from: "乗る駅",
-    to: "降りる駅",
-    okSection: "乗ってOK",
-    ngSection: "乗らない方がよい候補",
-    service: "種別",
-    destination: "行先",
-    direction: "方面",
-    platform: "番線",
-    image: "表示例",
-    noResultTitle: "候補が見つかりません",
-    noResultBody:
-      "あなたの降りる駅、乗り換える駅に行く電車はない可能性があります。今一度、行先を確認してください。",
-    ok: "OK",
-    ng: "NG",
-    local: "各停",
-    express: "急行",
-    outbound: "下り",
-    inbound: "上り",
-    showNg: "NG候補を表示",
-    hideNg: "NG候補を隠す",
-    ngCount: "件",
-  },
-  en: {
-    title: "Train Support",
-    subtitle: "We show which train display is safe to board",
-    languageButton: "日本語",
-    line: "Line",
-    from: "Boarding Station",
-    to: "Destination Station",
-    okSection: "You can board these trains",
-    ngSection: "Avoid these trains",
-    service: "Service",
-    destination: "Destination",
-    direction: "Direction",
-    platform: "Platform",
-    image: "Display example",
-    noResultTitle: "No matching trains found",
-    noResultBody:
-      "There may be no train from this platform that goes to your destination or transfer point. Please check the destination display again.",
-    ok: "OK",
-    ng: "NG",
-    local: "Local",
-    express: "Express",
-    outbound: "Outbound",
-    inbound: "Inbound",
-    showNg: "Show NG trains",
-    hideNg: "Hide NG trains",
-    ngCount: "items",
-  },
-};
+const LINE_ORDER: LineKey[] = [
+  'nex-shinjuku',
+  'nex-ofuna',
+  'meguro',
+  'namboku',
+  'mita',
+  'hibiya',
+  'toyoko',
+];
 
-function getTrainTypeLabel(type: "local" | "express", lang: Lang) {
-  return type === "local" ? uiText[lang].local : uiText[lang].express;
+// ---- ヘルパー ----
+
+function getCandidateTitle(candidate: TrainCandidate, line: LineKey, language: Language): string {
+  const typeLabel =
+    candidate.trainType === 'express'
+      ? language === 'ja' ? '急行' : 'Express'
+      : language === 'ja' ? '各停' : 'Local';
+  const destLabel = getStationLabel(line, candidate.destination, language);
+  return `${typeLabel} ${destLabel}`;
 }
 
-function getDirectionLabel(direction: "outbound" | "inbound", lang: Lang) {
-  return direction === "outbound"
-    ? uiText[lang].outbound
-    : uiText[lang].inbound;
-}
+// ---- コンポーネント ----
 
 export default function HomePage() {
-  const [lang, setLang] = useState<Lang>("en");
-  const [line, setLine] = useState<LineKey>("meguro");
-  const [showNg, setShowNg] = useState(false);
+  const [language, setLanguage] = useState<Language>('en');
+  const [mounted, setMounted] = useState(false);
+  const [line, setLine] = useState<LineKey>('meguro');
+  const [fromKey, setFromKey] = useState('meguro');
+  const [toKey, setToKey] = useState('fudomae');
 
-  const initialStations = trainLines.meguro.stations;
-  const [fromStation, setFromStation] = useState(initialStations[0]?.key ?? "");
-  const [toStation, setToStation] = useState(initialStations[1]?.key ?? "");
+  // 言語設定の永続化
+  useEffect(() => {
+    const saved = window.localStorage.getItem('travel-support-language');
+    if (saved === 'ja' || saved === 'en') {
+      setLanguage(saved as Language);
+    } else {
+      window.localStorage.setItem('travel-support-language', 'en');
+      setLanguage('en');
+    }
+    setMounted(true);
+  }, []);
 
-  const t = uiText[lang];
+  useEffect(() => {
+    if (!mounted) return;
+    window.localStorage.setItem('travel-support-language', language);
+  }, [language, mounted]);
 
-  const result = useMemo(() => {
-    return getTrainResults({
-      line,
-      fromStation,
-      toStation,
-    });
-  }, [line, fromStation, toStation]);
+  // 路線変更時は最初の2駅にリセット
+  useEffect(() => {
+    const stationList = trainLines[line].stations;
+    setFromKey(stationList[0].key);
+    setToKey(stationList[Math.min(1, stationList.length - 1)].key);
+  }, [line]);
 
-  function handleChangeLine(nextLine: LineKey) {
-    const stations = trainLines[nextLine].stations;
-    setLine(nextLine);
-    setFromStation(stations[0]?.key ?? "");
-    setToStation(stations[1]?.key ?? "");
-    setShowNg(false);
-  }
+  const stationList = useMemo(() => trainLines[line].stations, [line]);
 
-  const hasAnyResult = result.ok.length > 0 || result.ng.length > 0;
+  const { ok: okResults } = useMemo(
+    () => getTrainResults({ line, fromStation: fromKey, toStation: toKey }),
+    [line, fromKey, toKey]
+  );
+
+  if (!mounted) return null;
+
+  const t = {
+    title: 'Train Boarding Support',
+    subtitle:
+      language === 'ja'
+        ? '駅で見えている行先表示から、乗ってよい候補を見やすく表示します。'
+        : 'See which train display is safe to board from the platform.',
+    line: language === 'ja' ? '路線' : 'Line',
+    from: language === 'ja' ? '乗る駅' : 'Boarding Station',
+    to: language === 'ja' ? '降りる駅' : 'Destination Station',
+    results: language === 'ja' ? '乗ってよい候補' : 'Recommended train displays',
+    noneTitle: language === 'ja' ? '候補が見つかりません' : 'No matching train found',
+    noneText:
+      language === 'ja'
+        ? 'あなたの降りる駅・乗り換える駅に行く電車は見つかりませんでした。行先をもう一度確認してください。'
+        : 'No train display in this list appears to reach your destination. Please check the destination again.',
+    note:
+      language === 'ja'
+        ? '※ 実際の運行・種別・停車駅は現地表示で確認してください。'
+        : 'Please confirm the real-time platform display before boarding.',
+    switchToJa: '日本語',
+    switchToEn: 'English',
+  };
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#f5f7fb",
-        padding: "16px",
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 480,
-          margin: "0 auto",
-          background: "#ffffff",
-          borderRadius: 20,
-          padding: 16,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: 12,
-            marginBottom: 16,
-          }}
-        >
-          <div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: 24,
-                fontWeight: 700,
-              }}
-            >
-              {t.title}
-            </h1>
-            <p
-              style={{
-                margin: "8px 0 0 0",
-                fontSize: 13,
-                lineHeight: 1.5,
-                color: "#666",
-              }}
-            >
-              {t.subtitle}
-            </p>
-          </div>
+    <>
+      <Head>
+        <title>Travel Support</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
 
-          <button
-            onClick={() => setLang(lang === "ja" ? "en" : "ja")}
-            style={{
-              border: "1px solid #d9dee8",
-              borderRadius: 999,
-              background: "#fff",
-              padding: "8px 12px",
-              fontSize: 13,
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {t.languageButton}
-          </button>
-        </div>
-
-        <div style={{ display: "grid", gap: 12 }}>
-          <div>
-            <label
-              style={{
-                display: "block",
-                marginBottom: 6,
-                fontSize: 13,
-                fontWeight: 600,
-              }}
-            >
-              {t.line}
-            </label>
-            <select
-              value={line}
-              onChange={(e) => handleChangeLine(e.target.value as LineKey)}
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: 12,
-                border: "1px solid #d0d7e2",
-                fontSize: 16,
-                background: "#fff",
-              }}
-            >
-              {(Object.keys(trainLines) as LineKey[]).map((lineKey) => (
-                <option key={lineKey} value={lineKey}>
-                  {getLineLabel(lineKey, lang)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label
-              style={{
-                display: "block",
-                marginBottom: 6,
-                fontSize: 13,
-                fontWeight: 600,
-              }}
-            >
-              {t.from}
-            </label>
-            <select
-              value={fromStation}
-              onChange={(e) => {
-                setFromStation(e.target.value);
-                setShowNg(false);
-              }}
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: 12,
-                border: "1px solid #d0d7e2",
-                fontSize: 16,
-                background: "#fff",
-              }}
-            >
-              {trainLines[line].stations.map((station) => (
-                <option key={station.key} value={station.key}>
-                  {getStationLabel(line, station.key, lang)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label
-              style={{
-                display: "block",
-                marginBottom: 6,
-                fontSize: 13,
-                fontWeight: 600,
-              }}
-            >
-              {t.to}
-            </label>
-            <select
-              value={toStation}
-              onChange={(e) => {
-                setToStation(e.target.value);
-                setShowNg(false);
-              }}
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: 12,
-                border: "1px solid #d0d7e2",
-                fontSize: 16,
-                background: "#fff",
-              }}
-            >
-              {trainLines[line].stations.map((station) => (
-                <option key={station.key} value={station.key}>
-                  {getStationLabel(line, station.key, lang)}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {!hasAnyResult && (
-          <div
-            style={{
-              marginTop: 16,
-              background: "#fff7e8",
-              border: "1px solid #f1d08d",
-              borderRadius: 14,
-              padding: 14,
-            }}
-          >
-            <div style={{ fontWeight: 700, marginBottom: 6 }}>
-              {t.noResultTitle}
+      <main className="pageShell">
+        {/* ヒーローパネル */}
+        <section className="panel heroPanel">
+          <div className="heroTop">
+            <div className="heroText">
+              <h1>{t.title}</h1>
+              <p>{t.subtitle}</p>
             </div>
-            <div style={{ fontSize: 14, lineHeight: 1.6 }}>{t.noResultBody}</div>
+            <div className="languageSwitch">
+              <button
+                type="button"
+                className={language === 'en' ? 'langButton active' : 'langButton'}
+                onClick={() => setLanguage('en')}
+              >
+                {t.switchToEn}
+              </button>
+              <button
+                type="button"
+                className={language === 'ja' ? 'langButton active' : 'langButton'}
+                onClick={() => setLanguage('ja')}
+              >
+                {t.switchToJa}
+              </button>
+            </div>
           </div>
-        )}
+        </section>
 
-        {result.ok.length > 0 && (
-          <section style={{ marginTop: 20 }}>
-            <h2
-              style={{
-                margin: "0 0 12px 0",
-                fontSize: 18,
-                fontWeight: 700,
-                color: "#0b7a39",
-              }}
-            >
-              {t.okSection}
-            </h2>
+        {/* 入力パネル */}
+        <section className="panel formPanel">
+          <label className="field">
+            <span>{t.line}</span>
+            <select value={line} onChange={(e) => setLine(e.target.value as LineKey)}>
+              {LINE_ORDER.map((key) => (
+                <option key={key} value={key}>
+                  {getLineLabel(key, language)}
+                </option>
+              ))}
+            </select>
+          </label>
 
-            <div style={{ display: "grid", gap: 12 }}>
-              {result.ok.map((item, index) => (
-                <div
-                  key={`ok-${index}`}
-                  style={{
-                    border: "1px solid #bfe4c8",
-                    background: "#f1fff5",
-                    borderRadius: 16,
-                    padding: 14,
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "inline-block",
-                      fontSize: 12,
-                      fontWeight: 700,
-                      color: "#0b7a39",
-                      background: "#dff5e6",
-                      borderRadius: 999,
-                      padding: "4px 10px",
-                      marginBottom: 10,
-                    }}
-                  >
-                    {t.ok}
-                  </div>
+          <label className="field">
+            <span>{t.from}</span>
+            <select value={fromKey} onChange={(e) => setFromKey(e.target.value)}>
+              {stationList.map((s) => (
+                <option key={s.key} value={s.key}>
+                  {language === 'ja' ? s.ja : s.en}
+                </option>
+              ))}
+            </select>
+          </label>
 
-                  <div style={{ display: "grid", gap: 6, marginBottom: 12 }}>
-                    <div>
-                      <strong>{t.service}:</strong>{" "}
-                      {getTrainTypeLabel(item.trainType, lang)}
-                    </div>
-                    <div>
-                      <strong>{t.destination}:</strong>{" "}
-                      {getStationLabel(line, item.destination, lang)}
-                    </div>
-                    <div>
-                      <strong>{t.direction}:</strong>{" "}
-                      {getDirectionLabel(item.direction, lang)}
-                    </div>
-                    {item.platform && (
-                      <div>
-                        <strong>{t.platform}:</strong> {item.platform}
-                      </div>
-                    )}
-                  </div>
+          <label className="field">
+            <span>{t.to}</span>
+            <select value={toKey} onChange={(e) => setToKey(e.target.value)}>
+              {stationList.map((s) => (
+                <option key={s.key} value={s.key}>
+                  {language === 'ja' ? s.ja : s.en}
+                </option>
+              ))}
+            </select>
+          </label>
+        </section>
 
-                  {item.image && (
-                    <div>
-                      <div
-                        style={{
-                          fontSize: 12,
-                          color: "#666",
-                          marginBottom: 8,
-                          fontWeight: 600,
-                        }}
-                      >
-                        {t.image}
-                      </div>
+        {/* 結果パネル */}
+        <section className="panel resultsPanel">
+          <div className="sectionTitle">{t.results}</div>
 
-                      <div
-                        style={{
-                          position: "relative",
-                          width: "100%",
-                          aspectRatio: "16 / 9",
-                          borderRadius: 12,
-                          overflow: "hidden",
-                          background: "#eee",
-                        }}
-                      >
+          {okResults.length === 0 ? (
+            <div className="emptyState">
+              <strong>{t.noneTitle}</strong>
+              <p>{t.noneText}</p>
+            </div>
+          ) : (
+            <div className="resultsList">
+              {okResults.map((candidate) => {
+                return (
+                  <article key={`${candidate.destination}-${candidate.trainType}`} className="resultCard">
+                      <div className="resultImageBox">
                         <Image
-                          src={item.image}
-                          alt={`${getStationLabel(line, item.destination, lang)} display`}
+                          src={candidate.image!}
+                          alt={getCandidateTitle(candidate, line, language)}
                           fill
+                          sizes="(max-width: 640px) 95vw, 720px"
+                          className="resultImage"
                           unoptimized
-                          sizes="(max-width: 768px) 100vw, 320px"
-                          loading={index === 0 ? "eager" : "lazy"}
-                          style={{ objectFit: "contain" }}
+                          loading="eager"
                         />
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                      <div className="resultBody">
+                        <div className="resultTags">
+                          <span className="tagChip">{getLineLabel(line, language)}</span>
+                          <span className="tagChip">
+                            {candidate.trainType === 'express'
+                              ? language === 'ja' ? '急行' : 'Express'
+                              : language === 'ja' ? '各停' : 'Local'}
+                          </span>
+                          {candidate.platform && (
+                            <span className="tagChip">
+                              {language === 'ja' ? `${candidate.platform}番線` : `Platform ${candidate.platform}`}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                  </article>
+                );
+              })}
             </div>
-          </section>
-        )}
+          )}
 
-        {result.ng.length > 0 && (
-          <section style={{ marginTop: 20 }}>
-            <button
-              onClick={() => setShowNg((prev) => !prev)}
-              style={{
-                width: "100%",
-                border: "1px solid #f2c7c7",
-                background: "#fff6f6",
-                color: "#b42318",
-                borderRadius: 14,
-                padding: "12px 14px",
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: "pointer",
-                textAlign: "left",
-              }}
-            >
-              {showNg ? t.hideNg : t.showNg} ({result.ng.length} {t.ngCount})
-            </button>
+          <p className="noteText">{t.note}</p>
+        </section>
+      </main>
 
-            {showNg && (
-              <div style={{ display: "grid", gap: 12, marginTop: 12 }}>
-                {result.ng.map((item, index) => (
-                  <div
-                    key={`ng-${index}`}
-                    style={{
-                      border: "1px solid #f2c7c7",
-                      background: "#fff6f6",
-                      borderRadius: 16,
-                      padding: 14,
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "inline-block",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        color: "#b42318",
-                        background: "#fde7e7",
-                        borderRadius: 999,
-                        padding: "4px 10px",
-                        marginBottom: 10,
-                      }}
-                    >
-                      {t.ng}
-                    </div>
+      <style jsx>{`
+        :global(html) {
+          -webkit-text-size-adjust: 100%;
+        }
 
-                    <div style={{ display: "grid", gap: 6, marginBottom: 12 }}>
-                      <div>
-                        <strong>{t.service}:</strong>{" "}
-                        {getTrainTypeLabel(item.trainType, lang)}
-                      </div>
-                      <div>
-                        <strong>{t.destination}:</strong>{" "}
-                        {getStationLabel(line, item.destination, lang)}
-                      </div>
-                      <div>
-                        <strong>{t.direction}:</strong>{" "}
-                        {getDirectionLabel(item.direction, lang)}
-                      </div>
-                      {item.platform && (
-                        <div>
-                          <strong>{t.platform}:</strong> {item.platform}
-                        </div>
-                      )}
-                    </div>
+        :global(body) {
+          margin: 0;
+          font-family: Arial, Helvetica, sans-serif;
+          background: linear-gradient(180deg, #f8fafc 0%, #eefbf4 100%);
+          color: #0f172a;
+        }
 
-                    {item.image && (
-                      <div>
-                        <div
-                          style={{
-                            fontSize: 12,
-                            color: "#666",
-                            marginBottom: 8,
-                            fontWeight: 600,
-                          }}
-                        >
-                          {t.image}
-                        </div>
+        * {
+          box-sizing: border-box;
+        }
 
-                        <div
-                          style={{
-                            position: "relative",
-                            width: "100%",
-                            aspectRatio: "16 / 9",
-                            borderRadius: 12,
-                            overflow: "hidden",
-                            background: "#eee",
-                          }}
-                        >
-                          <Image
-                            src={item.image}
-                            alt={`${getStationLabel(line, item.destination, lang)} display`}
-                            fill
-                            unoptimized
-                            sizes="(max-width: 768px) 100vw, 320px"
-                            style={{ objectFit: "contain" }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-      </div>
-    </main>
+        .pageShell {
+          width: 100%;
+          max-width: 760px;
+          margin: 0 auto;
+          padding: 12px;
+          display: grid;
+          gap: 12px;
+        }
+
+        .panel {
+          background: #ffffff;
+          border: 1px solid #dfe7df;
+          border-radius: 18px;
+          padding: 14px;
+          box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+        }
+
+        .heroTop {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .heroText h1 {
+          margin: 0 0 6px;
+          font-size: 26px;
+          line-height: 1.15;
+        }
+
+        .heroText p {
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.55;
+          color: #475569;
+        }
+
+        .languageSwitch {
+          display: flex;
+          gap: 6px;
+          flex-shrink: 0;
+        }
+
+        .langButton {
+          border: 1px solid #cbd5e1;
+          background: #ffffff;
+          color: #334155;
+          border-radius: 999px;
+          padding: 8px 12px;
+          font-size: 13px;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        .langButton.active {
+          background: #0f172a;
+          border-color: #0f172a;
+          color: #ffffff;
+        }
+
+        .formPanel {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .field {
+          display: grid;
+          gap: 6px;
+        }
+
+        .field span {
+          font-size: 13px;
+          font-weight: 700;
+          color: #334155;
+        }
+
+        .field select {
+          width: 100%;
+          border: 1px solid #cbd5e1;
+          border-radius: 12px;
+          background: #ffffff;
+          padding: 11px 12px;
+          font-size: 14px;
+          color: #0f172a;
+        }
+
+        .resultsPanel {
+          display: grid;
+          gap: 12px;
+        }
+
+        .sectionTitle {
+          font-size: 18px;
+          font-weight: 800;
+        }
+
+        .resultsList {
+          display: grid;
+          gap: 10px;
+        }
+
+        .resultCard {
+          border: 1px solid #86efac;
+          background: #ecfdf5;
+          border-radius: 16px;
+          padding: 10px;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .resultImageBox {
+          position: relative;
+          width: 100%;
+          /* 433:73のアスペクト比 */
+          aspect-ratio: 433 / 73;
+          overflow: hidden;
+          border-radius: 8px;
+          background: #000000;
+        }
+
+        .resultImage {
+          object-fit: contain;
+        }
+
+        .resultBody {
+          min-width: 0;
+        }
+
+        .resultTitle {
+          font-size: 18px;
+          line-height: 1.3;
+          font-weight: 800;
+          color: #0f172a;
+          word-break: break-word;
+        }
+
+        .resultTags {
+          margin-top: 8px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+
+        .tagChip {
+          display: inline-flex;
+          align-items: center;
+          border-radius: 999px;
+          background: #ffffff;
+          border: 1px solid #dbeafe;
+          padding: 4px 9px;
+          font-size: 11px;
+          font-weight: 700;
+          color: #334155;
+        }
+
+        .emptyState {
+          border: 1px dashed #cbd5e1;
+          border-radius: 14px;
+          background: #f8fafc;
+          padding: 14px;
+        }
+
+        .emptyState strong {
+          display: block;
+          margin-bottom: 6px;
+          font-size: 15px;
+        }
+
+        .emptyState p,
+        .noteText {
+          margin: 0;
+          font-size: 13px;
+          line-height: 1.6;
+          color: #475569;
+        }
+
+        @media (max-width: 640px) {
+          .pageShell {
+            padding: 10px;
+            gap: 10px;
+          }
+          .panel {
+            padding: 12px;
+            border-radius: 16px;
+          }
+          .heroTop {
+            flex-direction: column;
+            gap: 10px;
+          }
+          .heroText h1 {
+            font-size: 22px;
+            margin-bottom: 6px;
+          }
+          .heroText p {
+            font-size: 13px;
+            line-height: 1.5;
+          }
+          .formPanel {
+            grid-template-columns: 1fr;
+            gap: 8px;
+          }
+          .field {
+            gap: 4px;
+          }
+          .field span {
+            font-size: 12px;
+          }
+          .field select {
+            padding: 9px 10px;
+            font-size: 14px;
+          }
+          .sectionTitle {
+            font-size: 17px;
+          }
+          .resultTitle {
+            font-size: 15px;
+          }
+          .tagChip {
+            font-size: 10px;
+            padding: 3px 7px;
+          }
+        }
+      `}</style>
+    </>
   );
 }
