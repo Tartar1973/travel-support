@@ -8,6 +8,16 @@ import type { TrainCandidate } from '../lib/train-logic';
 
 type Language = 'en' | 'ja';
 
+const LINE_ORDER: LineKey[] = [
+  'nex-shinjuku',
+  'nex-ofuna',
+  'meguro',
+  'namboku',
+  'mita',
+  'hibiya',
+  'toyoko',
+];
+
 // ---- ヘルパー ----
 
 function getCandidateTitle(candidate: TrainCandidate, line: LineKey, language: Language): string {
@@ -123,7 +133,7 @@ export default function HomePage() {
           <label className="field">
             <span>{t.line}</span>
             <select value={line} onChange={(e) => setLine(e.target.value as LineKey)}>
-              {(Object.keys(trainLines) as LineKey[]).map((key) => (
+              {LINE_ORDER.map((key) => (
                 <option key={key} value={key}>
                   {getLineLabel(key, language)}
                 </option>
